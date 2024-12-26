@@ -2,8 +2,12 @@
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using Shader = ShaderSystem;
 using System;
+using OpenTK.Mathematics;
+using Shader = ShaderSystem;
+using Texture = TextureSystem;
+using ModelLoad = Load;
+using Camera = CameraSystem;
 
 
 
@@ -11,8 +15,17 @@ using System;
 
 public class MainSystemEngine : GameWindow
 {
-    public int _VAO, _VBO, _EBO;
+    public int _VAO, _VBO, _EBO, _VertexTexture;
+    public int _Width, _Height;
     Shader _Shader;
+    ModelLoad _Model;
+    Camera _Camera;
+
+    public uint[] _Index =
+    {
+        0, 1, 3,
+        1, 2, 3
+    };
 
     public MainSystemEngine(int _Widht, int _Height, string _Title) : base(GameWindowSettings.Default, new NativeWindowSettings())
     {
@@ -25,30 +38,20 @@ public class MainSystemEngine : GameWindow
     {
         base.OnLoad();
 
-        float[] _Vert =
-        {
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.0f,  0.5f, 0.0f
-        };
+        _Shader = new Shader("D:\\VAOEngine\\VAOEngine\\Shader\\VertShader.glsl", "D:\\VAOEngine\\VAOEngine\\Shader\\FragShader.glsl");
+        _Model = new ModelLoad();
+        _Model.LoadModelFromFile("D:\\3D\\Cube.obj", _Shader);
 
-        _Shader = new Shader("(You're direction)\\Shader\\VertShader.glsl", "(You're direction)\\Shader\\FragShader.glsl");
+        _Camera = new Camera();
+        _Camera.CameraStartup();
 
         GL.ClearColor(0.2f,0.3f,0.4f,0.1f);
 
-        _VAO = GL.GenBuffer();
-        _VAO = GL.GenVertexArray();
+        
 
-        _VBO = GL.GenBuffer();
+        //Matrix4.CreateOrthographicOffCenter(0.0f, _Width, 0.0f, _Height, 0.1f, 100.0f);
 
-        GL.BindVertexArray(_VAO);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, _VAO);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, _VBO);
-
-        GL.BufferData(BufferTarget.ArrayBuffer, _Vert.Length*sizeof(float), _Vert,BufferUsageHint.StaticDraw);
-        GL.VertexAttribPointer(0,3,VertexAttribPointerType.Float,false, 3*sizeof(float),0);
-        GL.EnableVertexAttribArray(0);
-
+        //Use Shader
         _Shader.UseShader();
     }
 
@@ -68,11 +71,12 @@ public class MainSystemEngine : GameWindow
 
         GL.Clear(ClearBufferMask.ColorBufferBit);
 
-       
-
         _Shader.UseShader();
-        GL.BindVertexArray(_VAO);
-        GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+
+        _Camera.UpdateCameraMatrix(_Width, _Height, 45.0f, 0.1f, 100.0f);
+        _Camera.InputCameraSystem(KeyboardState);
+
+        _Model.Draw(_Shader,_Camera);
 
         SwapBuffers();
     }
@@ -82,6 +86,8 @@ public class MainSystemEngine : GameWindow
         base.OnFramebufferResize(e);
 
         GL.Viewport(0,0,e.Width,e.Height);
+        _Width = e.Width;
+        _Height = e.Height;
     }
 
 
