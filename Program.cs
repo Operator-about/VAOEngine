@@ -38,18 +38,14 @@ public class MainSystemEngine : GameWindow
     {
         base.OnLoad();
 
-        _Shader = new Shader("D:\\VAOEngine\\VAOEngine\\Shader\\VertShader.glsl", "D:\\VAOEngine\\VAOEngine\\Shader\\FragShader.glsl");
+        _Shader = new Shader("You're path\\VertShader.glsl", "You're path\\FragShader.glsl");
         _Model = new ModelLoad();
-        _Model.LoadModelFromFile("D:\\3D\\Cube.obj", _Shader);
+        _Model.LoadModelFromFile("You're model", _Shader);
 
         _Camera = new Camera();
         _Camera.CameraStartup();
 
         GL.ClearColor(0.2f,0.3f,0.4f,0.1f);
-
-        
-
-        //Matrix4.CreateOrthographicOffCenter(0.0f, _Width, 0.0f, _Height, 0.1f, 100.0f);
 
         //Use Shader
         _Shader.UseShader();
@@ -63,6 +59,8 @@ public class MainSystemEngine : GameWindow
         {
             Close();
         }
+
+        _Camera.UpdateVector();
     }
 
     protected override void OnRenderFrame(FrameEventArgs args)
@@ -73,10 +71,11 @@ public class MainSystemEngine : GameWindow
 
         _Shader.UseShader();
 
-        _Camera.UpdateCameraMatrix(_Width, _Height, 45.0f, 0.1f, 100.0f);
+        _Camera.UpdateCameraMatrix(_Width, _Height, 45.0f, 0.1f, 100.0f,_Shader);
         _Camera.InputCameraSystem(KeyboardState);
 
         _Model.Draw(_Shader,_Camera);
+        
 
         SwapBuffers();
     }

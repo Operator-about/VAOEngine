@@ -9,15 +9,16 @@ out vec3 Color;
 
 uniform mat4 camMatrix;
 uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
-
-void main(void)
+void main()
 {
 	CurrentPos = vec3(model*vec4(aPosition,1.0f));
 
-	Normal = aNormal;
+	Normal = mat3(transpose(inverse(model))) * aNormal;
+
+	gl_Position = projection * view * vec4(CurrentPos, 1.0);
 
 	Color = aColor;
-
-	gl_Position = camMatrix*vec4(CurrentPos,1.0f);
 }
