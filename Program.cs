@@ -5,7 +5,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using OpenTK.Mathematics;
 using Shader = ShaderSystem;
-using Texture = TextureSystem;
+//using Texture = TextureSystem;
 using ModelLoad = Load;
 using Camera = CameraSystem;
 
@@ -15,17 +15,16 @@ using Camera = CameraSystem;
 
 public class MainSystemEngine : GameWindow
 {
-    public int _VAO, _VBO, _EBO, _VertexTexture;
+
     public int _Width, _Height;
     Shader _Shader;
     ModelLoad _Model;
     Camera _Camera;
+    private double _Time;
 
-    public uint[] _Index =
-    {
-        0, 1, 3,
-        1, 2, 3
-    };
+   
+
+   
 
     public MainSystemEngine(int _Widht, int _Height, string _Title) : base(GameWindowSettings.Default, new NativeWindowSettings())
     {
@@ -38,12 +37,14 @@ public class MainSystemEngine : GameWindow
     {
         base.OnLoad();
 
-        _Shader = new Shader("You're path\\VertShader.glsl", "You're path\\FragShader.glsl");
+        _Shader = new Shader("D:\\VAOEngine\\VAOEngine\\Shader\\VertShader.glsl", "D:\\VAOEngine\\VAOEngine\\Shader\\FragShader.glsl");
         _Model = new ModelLoad();
-        _Model.LoadModelFromFile("You're model", _Shader);
+        _Model.LoadModelFromFile("D:\\3D\\Cube.obj", _Shader);
+
+
 
         _Camera = new Camera();
-        _Camera.CameraStartup();
+        _Camera.CameraStartup(90.0f,_Width,_Height);
 
         GL.ClearColor(0.2f,0.3f,0.4f,0.1f);
 
@@ -60,22 +61,28 @@ public class MainSystemEngine : GameWindow
             Close();
         }
 
-        _Camera.UpdateVector();
+       
     }
 
     protected override void OnRenderFrame(FrameEventArgs args)
     {
         base.OnRenderFrame(args);
 
+        _Time += 4.0f + args.Time;
+
         GL.Clear(ClearBufferMask.ColorBufferBit);
 
+        
         _Shader.UseShader();
+        var _Mode = Matrix4.Identity * Matrix4.CreateRotationX((float)MathHelper.DegreesToRadians(_Time));
+        _Shader.SetMatrix4("model",_Mode);
+        _Shader.SetMatrix4("view",_Camera.GetView());
+        _Shader.SetMatrix4("proj",_Camera.GetProjection());
 
-        _Camera.UpdateCameraMatrix(_Width, _Height, 45.0f, 0.1f, 100.0f,_Shader);
-        _Camera.InputCameraSystem(KeyboardState);
+        _Camera.InputCameraSystem(KeyboardState,MouseState);
 
         _Model.Draw(_Shader,_Camera);
-        
+
 
         SwapBuffers();
     }
@@ -87,6 +94,12 @@ public class MainSystemEngine : GameWindow
         GL.Viewport(0,0,e.Width,e.Height);
         _Width = e.Width;
         _Height = e.Height;
+    }
+
+    protected override void OnMouseMove(MouseMoveEventArgs e)
+    {
+        base.OnMouseMove(e);
+        
     }
 
 

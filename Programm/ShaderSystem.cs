@@ -56,9 +56,12 @@ public class ShaderSystem
 
     public void UseShader()
     {
-        GL.UseProgram(_Count);
+        GL.UseProgram(_Count);    
+    }
 
-        
-        
+    public void SetMatrix4(string _Name,Matrix4 _Parameter)
+    {
+        int _Location = GL.GetUniformLocation(_Count, _Name);
+        GL.UniformMatrix4(_Location,false, ref _Parameter);
     }
 }
