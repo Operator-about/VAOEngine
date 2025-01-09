@@ -78,6 +78,7 @@ public class ShaderSystem
     public void SetMatrix4(string _Name,Matrix4 _Parameter)
     {
         GL.UseProgram(_Count);
-        GL.UniformMatrix4(_UnifLoc[_Name],true, ref _Parameter);
+       
+        GL.UniformMatrix4(GL.GetUniformLocation(_Count, _Name),true, ref _Parameter);
     }
 }

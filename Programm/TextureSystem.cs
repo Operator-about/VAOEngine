@@ -4,46 +4,53 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Platform.Windows;
 using StbImageSharp;
 
-class TextureSystem
+public class TextureSystem
 {
 
     public int _Count;
-
-   
-
-
-    public void LoadTexture(string _FileTexture)
+    public string _Path;
+    public string _Type;
+    
+    public static TextureSystem Texture(string _File,string _Direct, string _Type)
     {
-        _Count = GL.GenTexture();
+        string _FileName = new string(_File);
+        _FileName = _Direct + '/' + _FileName;
 
-        Console.WriteLine("Load Texture from file...");
-        StbImage.stbi_set_flip_vertically_on_load(1);
-        ImageResult _Texture = ImageResult.FromStream(File.OpenRead(_FileTexture), ColorComponents.RedGreenBlueAlpha);
-        Console.WriteLine("Load Texture parameter");
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, 800, 800, 0, PixelFormat.Rgba, PixelType.UnsignedByte, _Texture.Data);
+        int _ID = GL.GenTexture();
 
-        float[] _Boarder =
-        {
-            1.0f, 1.0f, 0.0f, 1.0f
-        };
+        GL.ActiveTexture(TextureUnit.Texture0);
+        GL.BindTexture(TextureTarget.Texture2D, _ID);
+
+        Stream _TextureFile = File.OpenRead(_FileName);
+
+        ImageResult _Texture = ImageResult.FromStream(_TextureFile, ColorComponents.RedGreenBlueAlpha);
+
+        GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat.Rgba, _Texture.Width, _Texture.Height,0, PixelFormat.Rgba, PixelType.UnsignedByte, _Texture.Data);
+
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, _Boarder);
+        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
-        
-
-        Console.WriteLine("Use Texture");
-        UseTexture();
+        return new TextureSystem(_ID,_File,_Type);
     }
 
-    private void UseTexture()
+    public TextureSystem(int _ID, string _Path, string _Type)
     {
+        this._Count = _ID;
+        this._Path = _Path; 
+        this._Type = _Type;
+    }
+
+    public void UseTexture(TextureUnit _Unit)
+    {
+        GL.ActiveTexture(_Unit);
         GL.BindTexture(TextureTarget.Texture2D, _Count);
     }
 }

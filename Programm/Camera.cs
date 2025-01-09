@@ -13,7 +13,7 @@ using OpenTK.Windowing.Common;
 
 public class CameraSystem
 {
-    private float _Speed = 0.5f;
+    private float _Speed = 0.2f;
     public OpenTK.Mathematics.Vector3 _Position = new OpenTK.Mathematics.Vector3(0.0f, 0.0f, 0.0f);
     public OpenTK.Mathematics.Vector3 _UpDefult = OpenTK.Mathematics.Vector3.UnitY;
     public OpenTK.Mathematics.Vector3 _FrontDefult = -OpenTK.Mathematics.Vector3.UnitZ;
@@ -23,7 +23,7 @@ public class CameraSystem
     public float _YawDefult = -MathHelper.PiOver2;
     public float _PitchDefult;
     public float _Sentensity = 0.2f;
-    public float _Aspect;
+    public float _Aspect { private get; set; }
     public bool _First = true;
 
 
@@ -73,11 +73,11 @@ public class CameraSystem
 
     
 
-    public void InputCameraSystem(KeyboardState _Key, MouseState _Mouse)
+    public void InputCameraSystem(KeyboardState _Key, MouseState _Mouse,CursorState _Cursor)
     {
 
         
-        CursorState _Cursor = CursorState.Grabbed;
+        _Cursor = CursorState.Grabbed;
         OpenTK.Mathematics.Vector2 _LastPos = new OpenTK.Mathematics.Vector2();
 
 
@@ -126,18 +126,7 @@ public class CameraSystem
             _LastPos = new OpenTK.Mathematics.Vector2(_Mouse.X, _Mouse.Y);
 
             _Yaw += _DeltaX * _Sentensity;
-            if (_Pitch>89.0f)
-            {
-                _Pitch = 89.0f;
-            }
-            else if (_Pitch > -89.0f)
-            {
-                _Pitch = -89.0f;
-            }
-            else
-            {
-                _Pitch -= _DeltaX * _Sentensity;
-            }
+            _Pitch -= _DeltaY * _Sentensity;    
         }
 
         
@@ -166,6 +155,6 @@ public class CameraSystem
         _FrontDefult = OpenTK.Mathematics.Vector3.Normalize(_FrontDefult);
 
         _RightDefult = OpenTK.Mathematics.Vector3.Normalize(OpenTK.Mathematics.Vector3.Cross(_FrontDefult, OpenTK.Mathematics.Vector3.UnitY));
-        _UpDefult = OpenTK.Mathematics.Vector3.Normalize(OpenTK.Mathematics.Vector3.Cross(_Right, _FrontDefult));
+        _UpDefult = OpenTK.Mathematics.Vector3.Normalize(OpenTK.Mathematics.Vector3.Cross(_RightDefult, _FrontDefult));
     }
 }
