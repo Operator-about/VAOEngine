@@ -23,11 +23,7 @@ public class MainSystemEngine : GameWindow
     Camera _Camera;
     System.Numerics.Vector3 _Color = new System.Numerics.Vector3(0.5f, 0.5f, 0.0f);
     private int _VAO;
-    private string _DefaultCommand = "~add-";
-    private bool _ImportStatus = false;
-    private bool _ImportOrNo = false;
-    private string _Path;
-    private bool _DontLoadAgain = true;
+    
        
 
     private readonly float[] _Vert =
@@ -54,19 +50,16 @@ public class MainSystemEngine : GameWindow
 
 
 
-        if (_ImportOrNo==true)
-        {
-            _Model = new ModelLoad(_Path);
-            _ImportOrNo=false;  
-        }
+       
+       _Model = new ModelLoad("D:/3D/Craft.fbx");
+       
+        
 
 
-        if (_DontLoadAgain==true)
-        {
-            _Camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
+        
+        _Camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
             
-            _DontLoadAgain=false;
-        }
+       
 
         
 
@@ -82,7 +75,7 @@ public class MainSystemEngine : GameWindow
 
 
 
-        _Shader = new Shader("You path\\Shader\\VertShader.glsl", "You path \\Shader\\FragShader.glsl");
+        _Shader = new Shader("D:\\VAOEngine\\VAOEngine\\Shader\\VertShader.glsl", "D:\\VAOEngine\\VAOEngine\\Shader\\FragShader.glsl");
 
         //Use Shader
         _Shader.UseShader();
@@ -127,13 +120,7 @@ public class MainSystemEngine : GameWindow
         GL.Uniform4(_VertexLocation, _Color.X, _Color.Y, _Color.Z, 1.0f);
         GL.DrawArrays(PrimitiveType.Triangles,0,3);
 
-        if (_ImportStatus==false)
-        {
-            _ImportStatus = true;
-            _AddComponent = new Thread(AddComponent);
-            _AddComponent.Start();
-        }
-
+       
         SwapBuffers();
     }
 
@@ -152,26 +139,7 @@ public class MainSystemEngine : GameWindow
         
     }
 
-    private void AddComponent()
-    {
-        
-        Console.WriteLine("Pls, input command:");
-        _DefaultCommand = Console.ReadLine();
-        if (_DefaultCommand == "~add-Model")
-        {
-            string _RouteToModel = Console.ReadLine();
-            Console.WriteLine("Pls, input path to model:");
-            _Path = Console.ReadLine();
-            _ImportOrNo = true;
-            OnLoad();
-            _DefaultCommand = "~add-Model";
-            Thread.Sleep(1000);
-        }
-        else
-        {
-            Console.WriteLine("Uncorrected command! Try again");
-        }
-    }
+    
 }
 
 
