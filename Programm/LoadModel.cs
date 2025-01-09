@@ -42,6 +42,8 @@ public class Load
         _Direction = _Path.Substring(0,_Path.LastIndexOf('/'));
 
         Node(_Scene.RootNode, _Scene);
+
+        _Import.Dispose();
     }
 
    
@@ -50,7 +52,7 @@ public class Load
         for (int i = 0; i<_Node.MeshCount;i++)
         {
             Mesh _Mesh = _Scene.Meshes[_Node.MeshIndices[i]];
-            LoadModelInWorld(_Mesh,_Scene);
+            _MeshComp.Add(LoadModelInWorld(_Mesh,_Scene));
         }
         for (int i = 0; i<_Node.ChildCount;i++)
         {
@@ -92,18 +94,18 @@ public class Load
 
         Console.WriteLine("Output data from model. Vertex count:"+_Mesh.VertexCount+". Index count:"+_Mesh.FaceCount);
 
-        return new MeshC(CollectionsMarshal.AsSpan(_VertexG), CollectionsMarshal.AsSpan(_Index));
+        return new MeshC(_VertexG.ToArray(), _Index.ToArray());
 
     }
 
     
 
     //Draw model system
-    public void Draw()
+    public void Draw(Shader _Shader)
     {
         foreach (MeshC _Mesh in _MeshComp)
         {
-            _Mesh.DrawMesh();
+            _Mesh.DrawMesh(_Shader);
         }
     }
 }

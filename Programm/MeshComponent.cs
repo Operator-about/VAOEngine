@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
+using Shader = ShaderSystem;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System.Runtime.CompilerServices;
@@ -17,7 +18,6 @@ public struct VertexMesh
 {
     public Vector3 _Position;
     public Vector3 _Normal;
-    public Vector3 _Color;
 }
 
 
@@ -29,7 +29,7 @@ public class MeshComponent
 
     
 
-    public void DrawMesh()
+    public void DrawMesh(Shader _Shader)
     {
         GL.BindVertexArray(_VAO);
 
@@ -58,19 +58,22 @@ public class MeshComponent
         Console.WriteLine("Report data in buffer: Vertex");
         GL.BindBuffer(BufferTarget.ArrayBuffer, _VBO);
         GL.BufferData(BufferTarget.ArrayBuffer, _Vertex.Length * Unsafe.SizeOf<VertexMesh>(),ref MemoryMarshal.GetReference(_Vertex), BufferUsageHint.StaticDraw);
+        
         Console.WriteLine("Report data in buffer: Index");
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _EBO);
         GL.BufferData(BufferTarget.ElementArrayBuffer, _Index.Length * sizeof(int),ref MemoryMarshal.GetReference(_Index), BufferUsageHint.StaticDraw);
 
         //Position
         Console.WriteLine("Load Attribute: 0,3");
-        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._Position)));
         GL.EnableVertexAttribArray(0);
+        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._Position)));
+        
 
         //Normal
         Console.WriteLine("Load Attribute: 1,3");
-        GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._Normal)));
         GL.EnableVertexAttribArray(1);
+        GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._Normal)));
+        
 
         
 
