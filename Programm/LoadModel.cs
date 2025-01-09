@@ -1,80 +1,83 @@
 ﻿using System;
+using System.IO;
 using Assimp;
 using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using Shader = ShaderSystem;
-using Camera = CameraSystem;
 using MeshC = MeshComponent;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-class Load
+public static class Convert
 {
-    private List<float> _Vertex = new List<float>();
-    private List<float> _Normal = new List<float>();
-    private List<float> _TexCoord = new List<float>();  
-    private List<int> _Index = new List<int>();
-    private List<MeshC> _MeshComp = new List<MeshC>();
+    public static Vector3 ConvertToAssimpVec3(this Vector3D _AssimpVector)
+    {
+        return Unsafe.As<Vector3D, Vector3>(ref _AssimpVector);
+    }
+}
 
 
-    public void LoadModelFromFile(string _Path, Shader _Shader)
+
+public class Load
+{
+    
+    private List<MeshC> _MeshComp;
+    string _Direction;
+    private Shader _Shader;
+
+    public Load(string _Path)
+    {
+        LoadModelFromFile(_Path);
+    }
+
+    private void LoadModelFromFile(string _Path)
     {
      
         AssimpContext _Import = new AssimpContext();
-        Scene _Scene = _Import.ImportFile(_Path,PostProcessSteps.Triangulate|PostProcessSteps.FlipUVs);
+        Scene _Scene = _Import.ImportFile(_Path,PostProcessSteps.Triangulate);
 
-        Node(_Scene.RootNode, _Scene,_Shader);
+        _MeshComp = new List<MeshC>();
+
+        _Direction = _Path.Substring(0,_Path.LastIndexOf('/'));
+
+        Node(_Scene.RootNode, _Scene);
     }
 
    
-    private void Node(Node _Node, Scene _Scene,Shader _Shader)
+    private void Node(Node _Node, Scene _Scene)
     {
         for (int i = 0; i<_Node.MeshCount;i++)
         {
             Mesh _Mesh = _Scene.Meshes[_Node.MeshIndices[i]];
-            LoadModelInWorld(_Mesh,_Shader,_Scene);
+            LoadModelInWorld(_Mesh,_Scene);
         }
         for (int i = 0; i<_Node.ChildCount;i++)
         {
-            Node(_Node.Children[i],_Scene,_Shader);
+            Node(_Node.Children[i],_Scene);
         }
     }
 
-    private void LoadModelInWorld(Mesh _Mesh,Shader _Shader,Scene _Scene)
+    private MeshC LoadModelInWorld(Mesh _Mesh,Scene _Scene)
     {
-        
-       
+
+
+        List<VertexMesh> _VertexG = new List<VertexMesh>();
+        List<int> _Index = new List<int>();
 
         for (int i = 0;i<_Mesh.VertexCount;i++)
         {
 
-            //Vertex load
-            Console.WriteLine("Load Vertex:X");
-            _Vertex.Add(_Mesh.Vertices[i].X);
-            Console.WriteLine("Load Vertex:Y");
-            _Vertex.Add(_Mesh.Vertices[i].Y);
-            Console.WriteLine("Load Vertex:Z");
-            _Vertex.Add(_Mesh.Vertices[i].Z);
-            Console.WriteLine("Load vertex done!");        
+            VertexMesh _Vertex = new VertexMesh();
+
+            _Vertex._Position = _Mesh.Vertices[i].ConvertToAssimpVec3();
 
             if (_Mesh.HasNormals)
             {
-                //Normal load
-                Console.WriteLine("Load Normal:X");
-                _Normal.Add(_Mesh.Normals[i].X);
-                Console.WriteLine("Load Normal:Y");
-                _Normal.Add(_Mesh.Normals[i].Y);
-                Console.WriteLine("Load Normal:Z");
-                _Normal.Add(_Mesh.Normals[i].Z);
-                Console.WriteLine("Load normal done!");
+                _Vertex._Normal = _Mesh.Normals[i].ConvertToAssimpVec3();
             }
-            if (_Mesh.HasTextureCoords(0))
-            {
-                //TexCoordd load
 
-                _TexCoord.Add(_Mesh.TextureCoordinateChannels[0][i].X);
-                _TexCoord.Add(_Mesh.TextureCoordinateChannels[0][i].Y);
-
-            }
+            _VertexG.Add(_Vertex);
         }
 
         //Load Index
@@ -88,14 +91,19 @@ class Load
         }
 
         Console.WriteLine("Output data from model. Vertex count:"+_Mesh.VertexCount+". Index count:"+_Mesh.FaceCount);
+
+        return new MeshC(CollectionsMarshal.AsSpan(_VertexG), CollectionsMarshal.AsSpan(_Index));
+
     }
 
+    
+
     //Draw model system
-    public void Draw(Shader _Shader, Camera _Camera)
+    public void Draw()
     {
-        for (int i = 0; i<_MeshComp.Count(); i++)
+        foreach (MeshC _Mesh in _MeshComp)
         {
-            _MeshComp[i].DrawMesh(_Shader,_Camera);
+            _Mesh.DrawMesh();
         }
     }
 }

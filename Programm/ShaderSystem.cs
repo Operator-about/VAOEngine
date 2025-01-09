@@ -11,9 +11,11 @@ using OpenTK.Mathematics;
 public class ShaderSystem
 {
     public int _Count;
+    private readonly Dictionary<string, int> _UnifLoc;
 
     public ShaderSystem(string _VertexPathShader, string _FragPathShader)
     {
+        _Count = GL.CreateProgram();
         string _VertexSource = File.ReadAllText(_VertexPathShader);
         string _FragSource = File.ReadAllText(_FragPathShader);
 
@@ -25,6 +27,24 @@ public class ShaderSystem
 
         GL.CompileShader(_VertexShader);
         GL.GetShader(_VertexShader, ShaderParameter.CompileStatus, out int _Success);
+        GL.AttachShader(_Count, _VertexShader);
+        GL.AttachShader(_Count, _FragShader);
+
+        GL.LinkProgram(_Count);
+        
+
+
+        GL.GetProgram(_Count, GetProgramParameterName.ActiveUniforms, out var _NumverUnif);
+        _UnifLoc = new Dictionary<string, int>();
+
+        for (var i = 0; i < _NumverUnif; i++)
+        {
+            var _Key = GL.GetActiveUniform(_Count, i, out _, out _);
+            var _Location = GL.GetUniformLocation(_Count, _Key);
+
+            _UnifLoc.Add(_Key, _Location);
+        }
+
         if (_Success==0)
         {
             string _Log = GL.GetShaderInfoLog(_VertexShader);
@@ -39,12 +59,8 @@ public class ShaderSystem
             Console.WriteLine(_Log);
         }
 
-        _Count = GL.CreateProgram();
+        
 
-        GL.AttachShader(_Count, _VertexShader);
-        GL.AttachShader(_Count, _FragShader);
-
-        GL.LinkProgram(_Count);
         GL.GetProgram(_Count,GetProgramParameterName.LinkStatus, out int _SuccessP);
         if (_SuccessP != 0)
         {
@@ -61,7 +77,7 @@ public class ShaderSystem
 
     public void SetMatrix4(string _Name,Matrix4 _Parameter)
     {
-        int _Location = GL.GetUniformLocation(_Count, _Name);
-        GL.UniformMatrix4(_Location,false, ref _Parameter);
+        GL.UseProgram(_Count);
+        GL.UniformMatrix4(_UnifLoc[_Name],true, ref _Parameter);
     }
 }

@@ -8,47 +8,67 @@ using OpenTK;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using Shader = ShaderSystem;
 using OpenTK.Windowing.Common;
 
 
 public class CameraSystem
 {
-    private float _Speed = 10.0f;
+    private float _Speed = 0.5f;
     public OpenTK.Mathematics.Vector3 _Position = new OpenTK.Mathematics.Vector3(0.0f, 0.0f, 0.0f);
-    public OpenTK.Mathematics.Vector3 _Up = OpenTK.Mathematics.Vector3.UnitY;
-    public OpenTK.Mathematics.Vector3 _Front = new OpenTK.Mathematics.Vector3(0.0f, 0.0f, -1.0f);
-    public Matrix4 _CameraMatrix = new Matrix4();
+    public OpenTK.Mathematics.Vector3 _UpDefult = OpenTK.Mathematics.Vector3.UnitY;
+    public OpenTK.Mathematics.Vector3 _FrontDefult = -OpenTK.Mathematics.Vector3.UnitZ;
+    public OpenTK.Mathematics.Vector3 _RightDefult = -OpenTK.Mathematics.Vector3.UnitX;
 
-    public OpenTK.Mathematics.Vector3 _Target = OpenTK.Mathematics.Vector3.Zero;
-    public OpenTK.Mathematics.Vector3 _Direction;
-    public OpenTK.Mathematics.Vector3 _CameraRight;
-    public OpenTK.Mathematics.Vector3 _CameraUp;
-
-    public OpenTK.Mathematics.Vector3 _Right;
-
-    public float _FOV;
     public int _Width, _Hegth;
-    public Matrix4 _View;
-    public float _Yaw = -90.0f;
-    public float _Pitch = 0.0f;
-    public float _Sentensity = 90.0f;
+    public float _YawDefult = -MathHelper.PiOver2;
+    public float _PitchDefult;
+    public float _Sentensity = 0.2f;
+    public float _Aspect;
     public bool _First = true;
-   
 
-    public object CameraStartup(float _FOVLoc, int _WidthL, int _HegthL)
+
+    public float _FOVDefult = MathHelper.PiOver2;
+    public float _FOV
     {
-        _Direction = OpenTK.Mathematics.Vector3.Normalize(_Position - _Target);
-        _Right = OpenTK.Mathematics.Vector3.Normalize(OpenTK.Mathematics.Vector3.Cross(_Up, _Direction));
-        _CameraRight = OpenTK.Mathematics.Vector3.Normalize(OpenTK.Mathematics.Vector3.Cross(_Up, _CameraRight));
-        _CameraUp = OpenTK.Mathematics.Vector3.Cross(_Direction, _CameraRight);
-        _View = Matrix4.LookAt(_Position, _Position + _Front, _Up);
+        get => MathHelper.RadiansToDegrees(_FOVDefult);
+        set
+        { 
+            var _Angle = MathHelper.Clamp(value, 1f, 90f);
+            _FOVDefult = MathHelper.DegreesToRadians(_Angle);
+        }
+    }
 
-        _FOV = _FOVLoc;
-        _Width = _WidthL;
-        _Hegth = _HegthL;
+    public float _Pitch
+    {
+        get => MathHelper.RadiansToDegrees(_PitchDefult);
+        set
+        {
+            var _Angle = MathHelper.Clamp(value, -89f,89f);
+            _PitchDefult = MathHelper.DegreesToRadians(_Angle);
+            UpdateVector();
+        }
+    }
 
-        return (_FOV, _Width, _Hegth);
+    public float _Yaw
+    {
+        get => MathHelper.RadiansToDegrees(_PitchDefult);
+        set
+        {
+            _PitchDefult = MathHelper.DegreesToRadians(value);
+            UpdateVector();
+        }
+    }
+
+    public OpenTK.Mathematics.Vector3 _Front => _FrontDefult;
+    public OpenTK.Mathematics.Vector3 _Up => _UpDefult;
+    public OpenTK.Mathematics.Vector3 _Right => _RightDefult;
+
+
+
+    public CameraSystem(OpenTK.Mathematics.Vector3 _Pos, float _Asp)
+    {
+        _Position = _Pos;
+        _Aspect = _Asp;
     }
 
     
@@ -120,26 +140,32 @@ public class CameraSystem
             }
         }
 
-        _Front.X = (float)Math.Sin(MathHelper.DegreesToRadians(_Pitch)) * (float)Math.Sin(MathHelper.DegreesToRadians(_Yaw));
-        _Front.Z = (float)Math.Sin(MathHelper.DegreesToRadians(_Pitch)) * (float)Math.Sin(MathHelper.DegreesToRadians(_Yaw));
-        _Front.Y = (float)Math.Sin(MathHelper.DegreesToRadians(_Pitch));
-
-        _Front = OpenTK.Mathematics.Vector3.Normalize(_Front);
+        
 
     }
 
-    public void SetCameraMatrix(Shader _Shader, string _NameParameterInShader)
-    {
-        GL.UniformMatrix4(GL.GetAttribLocation(_Shader._Count,_NameParameterInShader),false, ref _CameraMatrix);
-    }
+    
 
     public Matrix4 GetView()
     {
-        return Matrix4.LookAt(_Position, _Position + _Front, _Up);
+        return Matrix4.LookAt(_Position, _Position + _FrontDefult, _UpDefult);
     }
 
     public Matrix4 GetProjection()
     {
-        return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(_FOV), (float)(_Width / _Hegth), 0.1f, 100.0f);
+        return Matrix4.CreatePerspectiveFieldOfView(_FOVDefult, _Aspect, 0.01f, 100.0f);
+    }
+
+
+    private void UpdateVector()
+    {
+        _FrontDefult.X = MathF.Cos(_PitchDefult) * MathF.Cos(_YawDefult);
+        _FrontDefult.Y = MathF.Sin(_PitchDefult);
+        _FrontDefult.X = MathF.Cos(_PitchDefult) * MathF.Sin(_YawDefult);
+
+        _FrontDefult = OpenTK.Mathematics.Vector3.Normalize(_FrontDefult);
+
+        _RightDefult = OpenTK.Mathematics.Vector3.Normalize(OpenTK.Mathematics.Vector3.Cross(_FrontDefult, OpenTK.Mathematics.Vector3.UnitY));
+        _UpDefult = OpenTK.Mathematics.Vector3.Normalize(OpenTK.Mathematics.Vector3.Cross(_Right, _FrontDefult));
     }
 }
