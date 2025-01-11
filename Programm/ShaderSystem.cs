@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
@@ -80,5 +79,16 @@ public class ShaderSystem
         GL.UseProgram(_Count);
        
         GL.UniformMatrix4(GL.GetUniformLocation(_Count, _Name),true, ref _Parameter);
+    }
+
+    public void SetVector3(string _Name, Vector3 _Parameter)
+    {
+        GL.UseProgram(_Count);
+        GL.Uniform3(GL.GetUniformLocation(_Count, _Name),_Parameter);
+    }
+
+    public int GetAttrib(string _Name)
+    {
+        return GL.GetAttribLocation(_Count, _Name); 
     }
 }

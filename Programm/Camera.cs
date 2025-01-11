@@ -13,11 +13,11 @@ using OpenTK.Windowing.Common;
 
 public class CameraSystem
 {
-    private float _Speed = 0.2f;
-    public OpenTK.Mathematics.Vector3 _Position = new OpenTK.Mathematics.Vector3(0.0f, 0.0f, 0.0f);
+    private float _Speed = 0.05f;
+    public OpenTK.Mathematics.Vector3 _Position { get; set; }
     public OpenTK.Mathematics.Vector3 _UpDefult = OpenTK.Mathematics.Vector3.UnitY;
     public OpenTK.Mathematics.Vector3 _FrontDefult = -OpenTK.Mathematics.Vector3.UnitZ;
-    public OpenTK.Mathematics.Vector3 _RightDefult = -OpenTK.Mathematics.Vector3.UnitX;
+    public OpenTK.Mathematics.Vector3 _RightDefult = OpenTK.Mathematics.Vector3.UnitX;
 
     public int _Width, _Hegth;
     public float _YawDefult = -MathHelper.PiOver2;
@@ -25,18 +25,16 @@ public class CameraSystem
     public float _Sentensity = 0.2f;
     public float _Aspect { private get; set; }
     public bool _First = true;
-
-
     public float _FOVDefult = MathHelper.PiOver2;
-    public float _FOV
-    {
-        get => MathHelper.RadiansToDegrees(_FOVDefult);
-        set
-        { 
-            var _Angle = MathHelper.Clamp(value, 1f, 90f);
-            _FOVDefult = MathHelper.DegreesToRadians(_Angle);
-        }
-    }
+    private OpenTK.Mathematics.Vector2 _LastPos;
+
+    public OpenTK.Mathematics.Vector3 _Front => _FrontDefult;
+    public OpenTK.Mathematics.Vector3 _Up => _UpDefult;
+    public OpenTK.Mathematics.Vector3 _Right => _RightDefult;
+
+
+    
+    
 
     public float _Pitch
     {
@@ -51,17 +49,25 @@ public class CameraSystem
 
     public float _Yaw
     {
-        get => MathHelper.RadiansToDegrees(_PitchDefult);
+        get => MathHelper.RadiansToDegrees(_YawDefult);
         set
         {
-            _PitchDefult = MathHelper.DegreesToRadians(value);
+            _YawDefult = MathHelper.DegreesToRadians(value);
             UpdateVector();
         }
     }
 
-    public OpenTK.Mathematics.Vector3 _Front => _FrontDefult;
-    public OpenTK.Mathematics.Vector3 _Up => _UpDefult;
-    public OpenTK.Mathematics.Vector3 _Right => _RightDefult;
+    public float _FOV
+    {
+        get => MathHelper.RadiansToDegrees(_FOVDefult);
+        set
+        {
+            var _Angle = MathHelper.Clamp(value, 1f, 90f);
+            _FOVDefult = MathHelper.DegreesToRadians(_Angle);
+        }
+    }
+
+
 
 
 
@@ -78,7 +84,7 @@ public class CameraSystem
 
         
         _Cursor = CursorState.Grabbed;
-        OpenTK.Mathematics.Vector2 _LastPos = new OpenTK.Mathematics.Vector2();
+        
 
 
         if (_Key.IsKeyDown(Keys.W))
@@ -95,14 +101,14 @@ public class CameraSystem
         }
         if (_Key.IsKeyDown(Keys.A))
         {
-            
-            _Position -= OpenTK.Mathematics.Vector3.Normalize(OpenTK.Mathematics.Vector3.Cross(_Front,_Up)) * _Speed;
+
+            _Position -= _Right * _Speed;
             Console.WriteLine("Output: A, Position(X):" + _Position.X + " (Y):" + _Position.Y + " (Z):" + _Position.Z);
         }
         if (_Key.IsKeyDown(Keys.D))
         {
             
-            _Position += OpenTK.Mathematics.Vector3.Normalize(OpenTK.Mathematics.Vector3.Cross(_Front, _Up)) * _Speed;
+            _Position += _Right * _Speed;
             Console.WriteLine("Output: D, Position(X):" + _Position.X + " (Y):" + _Position.Y + " (Z):" + _Position.Z);
         }
         if (_Key.IsKeyDown(Keys.Space))
@@ -114,19 +120,30 @@ public class CameraSystem
             _Position -= _Up * _Speed;
         }
 
-        if (_First)
+        if (_Mouse.IsButtonDown(MouseButton.Left))
         {
-            _LastPos = new OpenTK.Mathematics.Vector2(_Mouse.X, _Mouse.Y);
-            _First = false;
-        }
-        else
-        {
-            float _DeltaX = _Mouse.X - _LastPos.X;
-            float _DeltaY = _Mouse.Y - _LastPos.Y;
-            _LastPos = new OpenTK.Mathematics.Vector2(_Mouse.X, _Mouse.Y);
+            if (_First)
+            {
+                _LastPos = new OpenTK.Mathematics.Vector2(_Mouse.X, _Mouse.Y);
+                _First = false;
+            }
+            else
+            {
+                float _DeltaX = _Mouse.X - _LastPos.X;
+                float _DeltaY = _Mouse.Y - _LastPos.Y;
+                _LastPos = new OpenTK.Mathematics.Vector2(_Mouse.X, _Mouse.Y);
 
-            _Yaw += _DeltaX * _Sentensity;
-            _Pitch -= _DeltaY * _Sentensity;    
+                _DeltaX *= _Sentensity;
+                _DeltaY *= _Sentensity;
+
+                _Yaw += _DeltaX;
+                _Pitch -= _DeltaY;
+            }
+        }
+        if (_Mouse.IsButtonReleased(MouseButton.Left))
+        {
+            _First = true;
+            _Cursor = CursorState.Normal;
         }
 
         
