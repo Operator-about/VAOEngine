@@ -77,39 +77,31 @@ public class CameraSystem
         _Aspect = _Asp;
     }
 
-    
 
-    public void InputCameraSystem(KeyboardState _Key, MouseState _Mouse,CursorState _Cursor)
+
+    public void InputCameraSystem(KeyboardState _Key, MouseState _Mouse, CursorState _Cursor)
     {
 
-        
+
         _Cursor = CursorState.Grabbed;
-        
+
 
 
         if (_Key.IsKeyDown(Keys.W))
         {
-            
             _Position += _Front * _Speed;
-            Console.WriteLine("Output: W, Position(X):" + _Position.X + " (Y):" + _Position.Y + " (Z):" + _Position.Z);
         }
         if (_Key.IsKeyDown(Keys.S))
         {
-            
             _Position -= _Front * _Speed;
-            Console.WriteLine("Output: S, Position(X):" + _Position.X + " (Y):" + _Position.Y + " (Z):" + _Position.Z);
         }
         if (_Key.IsKeyDown(Keys.A))
-        {
-
+        { 
             _Position -= _Right * _Speed;
-            Console.WriteLine("Output: A, Position(X):" + _Position.X + " (Y):" + _Position.Y + " (Z):" + _Position.Z);
         }
         if (_Key.IsKeyDown(Keys.D))
-        {
-            
+        { 
             _Position += _Right * _Speed;
-            Console.WriteLine("Output: D, Position(X):" + _Position.X + " (Y):" + _Position.Y + " (Z):" + _Position.Z);
         }
         if (_Key.IsKeyDown(Keys.Space))
         {

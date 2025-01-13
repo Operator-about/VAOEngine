@@ -47,7 +47,7 @@ public class Load
 
         _MeshComp = new List<MeshC>();
 
-        _Direction = _Path.Substring(0,_Path.LastIndexOf('/'));
+        //_Direction = _Path.Substring(0,_Path.LastIndexOf('\\'));
 
         Node(_Scene.RootNode, _Scene);
 
