@@ -23,6 +23,7 @@ public class MainSystemEngine : GameWindow
 
     private int _Width, _Height;
     private Vector3 _LampPos = new Vector3(1.2f, 1.0f, 5.0f);
+    private Vector3 _ModelPos = new Vector3();
     Shader _Shader, _ModelShader, _LampShader;
     Comp _Component;
     ModelLoad _FModel, _LModel;
@@ -77,8 +78,20 @@ public class MainSystemEngine : GameWindow
         Console.WriteLine("Input Direction For Model Light:");
         _Direction = Console.ReadLine();
         _LModel = new ModelLoad(_Direction);
-        
-        
+
+
+        Console.WriteLine("Input Coord For Model Position:");
+        int X = Int32.Parse(Console.ReadLine());
+        int Y = Int32.Parse(Console.ReadLine());
+        int Z = Int32.Parse(Console.ReadLine());
+        _ModelPos = new Vector3(X, Y, Z);
+
+        Console.WriteLine("Input Coord For Lamp Position:");
+        X = Int32.Parse(Console.ReadLine());
+        Y = Int32.Parse(Console.ReadLine());
+        Z = Int32.Parse(Console.ReadLine());
+        _LampPos = new Vector3(X, Y, Z);
+
 
         //Use Shader
         _Shader.UseShader();
@@ -116,6 +129,7 @@ public class MainSystemEngine : GameWindow
 
         _ModelShader.UseShader();
         var _ModelF = Matrix4.Identity;
+        _ModelF = Matrix4.CreateTranslation(_ModelPos);
         //model load in frag shader...
         _Component.SetModel(_ModelShader, _Camera, _FModel, _LampPos, _ModelF);
 
