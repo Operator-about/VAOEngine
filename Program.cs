@@ -48,15 +48,15 @@ public class MainSystemEngine : GameWindow
         base.OnLoad();
 
         Console.WriteLine("Input Direction For Vertex Shader:");
-        _DirectionVert = Console.ReadLine();
+        _DirectionVert = Console.ReadLine()!;
         Console.WriteLine("Input Direction For Fragment Shader:");
-        _DirectionFrag = Console.ReadLine();
+        _DirectionFrag = Console.ReadLine()!;
         _Shader = new Shader(_DirectionVert, _DirectionFrag);
 
         _LampShader = new Shader(_DirectionVert, _DirectionFrag);
 
         Console.WriteLine("Input Direction For Fragment Shader:");
-        _DirectionFrag = Console.ReadLine();
+        _DirectionFrag = Console.ReadLine()!;
         _ModelShader = new Shader(_DirectionVert, _DirectionFrag);
 
         GL.ClearColor(0.2f, 0.3f, 0.4f, 0.1f);
@@ -72,24 +72,24 @@ public class MainSystemEngine : GameWindow
         CursorState = CursorState.Grabbed;
 
         Console.WriteLine("Input Direction For Model:");
-        _Direction = Console.ReadLine();
+        _Direction = Console.ReadLine()!;
         _FModel = new ModelLoad(_Direction);
 
         Console.WriteLine("Input Direction For Model Light:");
-        _Direction = Console.ReadLine();
+        _Direction = Console.ReadLine()!;
         _LModel = new ModelLoad(_Direction);
 
 
-        Console.WriteLine("Input Coord For Model Position:");
-        int X = Int32.Parse(Console.ReadLine());
-        int Y = Int32.Parse(Console.ReadLine());
-        int Z = Int32.Parse(Console.ReadLine());
-        _ModelPos = new Vector3(X, Y, Z);
+        //Console.WriteLine("Input Coord For Model Position:");
+        //int X = Int32.Parse(Console.ReadLine());
+        //int Y = Int32.Parse(Console.ReadLine());
+        //int Z = Int32.Parse(Console.ReadLine());
+        //_ModelPos = new Vector3(X, Y, Z);
 
         Console.WriteLine("Input Coord For Lamp Position:");
-        X = Int32.Parse(Console.ReadLine());
-        Y = Int32.Parse(Console.ReadLine());
-        Z = Int32.Parse(Console.ReadLine());
+        int X = Int32.Parse(Console.ReadLine()!);
+        int Y = Int32.Parse(Console.ReadLine()!);
+        int Z = Int32.Parse(Console.ReadLine()!);
         _LampPos = new Vector3(X, Y, Z);
 
 
@@ -129,7 +129,6 @@ public class MainSystemEngine : GameWindow
 
         _ModelShader.UseShader();
         var _ModelF = Matrix4.Identity;
-        _ModelF = Matrix4.CreateTranslation(_ModelPos);
         //model load in frag shader...
         _Component.SetModel(_ModelShader, _Camera, _FModel, _LampPos, _ModelF);
 
