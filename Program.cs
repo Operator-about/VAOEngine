@@ -69,7 +69,7 @@ public class MainSystemEngine : GameWindow
 
         _Camera = new Camera(Vector3.UnitZ * 3, _Width / (float)_Height);
 
-        CursorState = CursorState.Grabbed;
+        
 
         Console.WriteLine("Input Direction For Model:");
         _Direction = Console.ReadLine()!;
@@ -86,15 +86,16 @@ public class MainSystemEngine : GameWindow
         //int Z = Int32.Parse(Console.ReadLine());
         //_ModelPos = new Vector3(X, Y, Z);
 
-        Console.WriteLine("Input Coord For Lamp Position:");
-        int X = Int32.Parse(Console.ReadLine()!);
-        int Y = Int32.Parse(Console.ReadLine()!);
-        int Z = Int32.Parse(Console.ReadLine()!);
-        _LampPos = new Vector3(X, Y, Z);
+        //Console.WriteLine("Input Coord For Lamp Position:");
+        //int X = Int32.Parse(Console.ReadLine()!);
+        //int Y = Int32.Parse(Console.ReadLine()!);
+        //int Z = Int32.Parse(Console.ReadLine()!);
+        //_LampPos = new Vector3(X, Y, Z);
 
 
         //Use Shader
         _Shader.UseShader();
+        CursorState = CursorState.Grabbed;
     }
 
     protected override void OnUpdateFrame(FrameEventArgs args)
