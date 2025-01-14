@@ -13,6 +13,7 @@ using ModelLoad = Load;
 using Camera = CameraSystem;
 using Comp = AddComponent;
 using Assimp;
+using System.Reflection;
 
 
 
@@ -47,17 +48,19 @@ public class MainSystemEngine : GameWindow
     {
         base.OnLoad();
 
-        Console.WriteLine("Input Direction For Vertex Shader:");
-        _DirectionVert = Console.ReadLine()!;
-        Console.WriteLine("Input Direction For Fragment Shader:");
-        _DirectionFrag = Console.ReadLine()!;
-        _Shader = new Shader(_DirectionVert, _DirectionFrag);
+        Path.Combine();
 
-        _LampShader = new Shader(_DirectionVert, _DirectionFrag);
+        //Console.WriteLine("Input Direction For Vertex Shader:");
+        //_DirectionVert = Console.ReadLine()!;
+        //Console.WriteLine("Input Direction For Fragment Shader:");
+        //_DirectionFrag = Console.ReadLine()!;
+        _Shader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragShader.glsl");
 
-        Console.WriteLine("Input Direction For Fragment Shader:");
-        _DirectionFrag = Console.ReadLine()!;
-        _ModelShader = new Shader(_DirectionVert, _DirectionFrag);
+        _LampShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragShader.glsl");
+
+        //Console.WriteLine("Input Direction For Fragment Shader:");
+        //_DirectionFrag = Console.ReadLine()!;
+        _ModelShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragLightShader.glsl");
 
         GL.ClearColor(0.2f, 0.3f, 0.4f, 0.1f);
         GL.Enable(EnableCap.DepthTest);
