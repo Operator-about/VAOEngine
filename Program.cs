@@ -24,12 +24,11 @@ public class MainSystemEngine : GameWindow
 
     private int _Width, _Height;
     private Vector3 _LampPos = new Vector3(1.2f, 1.0f, 5.0f);
-    private Vector3 _ModelPos = new Vector3();
     Shader _Shader, _ModelShader, _LampShader;
     Comp _Component;
     ModelLoad _FModel, _LModel;
     Camera _Camera;
-    private string _Direction, _DirectionVert, _DirectionFrag;
+    private string _Direction;
     
 
 

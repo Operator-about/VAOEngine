@@ -26,25 +26,7 @@ public class ShaderSystem
 
         GL.CompileShader(_VertexShader);
         GL.GetShader(_VertexShader, ShaderParameter.CompileStatus, out int _Success);
-        GL.AttachShader(_Count, _VertexShader);
-        GL.AttachShader(_Count, _FragShader);
-
-        GL.LinkProgram(_Count);
-        
-
-
-        GL.GetProgram(_Count, GetProgramParameterName.ActiveUniforms, out var _NumverUnif);
-        _UnifLoc = new Dictionary<string, int>();
-
-        for (var i = 0; i < _NumverUnif; i++)
-        {
-            var _Key = GL.GetActiveUniform(_Count, i, out _, out _);
-            var _Location = GL.GetUniformLocation(_Count, _Key);
-
-            _UnifLoc.Add(_Key, _Location);
-        }
-
-        if (_Success==0)
+        if (_Success == 0)
         {
             string _Log = GL.GetShaderInfoLog(_VertexShader);
             Console.WriteLine(_Log);
@@ -58,9 +40,13 @@ public class ShaderSystem
             Console.WriteLine(_Log);
         }
 
-        
+        _Count = GL.CreateProgram();
 
-        GL.GetProgram(_Count,GetProgramParameterName.LinkStatus, out int _SuccessP);
+        GL.AttachShader(_Count, _VertexShader);
+        GL.AttachShader(_Count, _FragShader);
+
+        GL.LinkProgram(_Count);
+        GL.GetProgram(_Count, GetProgramParameterName.LinkStatus, out int _SuccessP);
         if (_SuccessP != 0)
         {
             string _Log = GL.GetProgramInfoLog(_Count);
