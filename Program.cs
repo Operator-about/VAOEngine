@@ -2,18 +2,15 @@
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System;
-using System.Threading;
-using System.Collections.Concurrent;
 using OpenTK.Mathematics;
-using System.Threading;
-using System.Threading.Tasks;
+using System.IO;
 using Shader = ShaderSystem;
 using ModelLoad = Load;
 using Camera = CameraSystem;
 using Comp = AddComponent;
-using Assimp;
-using System.Reflection;
+using System.Runtime;
+using System.Threading;
+
 
 
 
@@ -24,16 +21,23 @@ public class MainSystemEngine : GameWindow
 
     private int _Width, _Height;
     private Vector3 _LampPos = new Vector3(1.2f, 1.0f, 5.0f);
+    private Vector3 _Position = new Vector3(1.0f,1.0f,1.0f);
+
     Shader _Shader, _ModelShader, _LampShader;
     Comp _Component;
-    ModelLoad _FModel, _LModel;
+    ModelLoad _LModel, _FModel;
     Camera _Camera;
-    private string _Direction;
+    StreamWriter _FileWrite;
+    StreamReader _FileRead;
     
-
-
+    private string _Line;
+    private string _Direction, _PathModelSave;
     private System.Numerics.Vector3 _Color = new System.Numerics.Vector3(2.0f,5.0f,2.0f);
+    private bool _NewSave;
 
+
+
+    //private int X, Y, Z;
     
 
     public MainSystemEngine(string _Title) : base(GameWindowSettings.Default, new NativeWindowSettings())
@@ -47,52 +51,81 @@ public class MainSystemEngine : GameWindow
     {
         base.OnLoad();
 
-        Path.Combine();
 
-        //Console.WriteLine("Input Direction For Vertex Shader:");
-        //_DirectionVert = Console.ReadLine()!;
-        //Console.WriteLine("Input Direction For Fragment Shader:");
-        //_DirectionFrag = Console.ReadLine()!;
+        Console.WriteLine("Input route to save file");
+        //Path to save file
+        _PathModelSave = Console.ReadLine()!;
+        ReturnString(_PathModelSave);
+
+
+        //Load shader system
         _Shader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragShader.glsl");
-
         _LampShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragShader.glsl");
-
-        //Console.WriteLine("Input Direction For Fragment Shader:");
-        //_DirectionFrag = Console.ReadLine()!;
         _ModelShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragLightShader.glsl");
 
         GL.ClearColor(0.2f, 0.3f, 0.4f, 0.1f);
         GL.Enable(EnableCap.DepthTest);
 
-        
 
 
+        //Load component for add
         _Component = new Comp();
 
+        //Load Camera
         _Camera = new Camera(Vector3.UnitZ * 3, _Width / (float)_Height);
 
-        
+        /*Load file system
+         * If user got save file, that user maybe use this save file
+        */
+        if (File.Exists(_PathModelSave))
+        {
+            Console.WriteLine("Input: Yes. If you want use save file:");
+            if (Console.ReadLine()! == "Yes" && File.Exists(_PathModelSave))
+            {
+                _NewSave = false;
+            }
+            else
+            {
+                _NewSave = true;
+            }
+        }
+        else
+        {
+            _NewSave = true;
+        }
 
-        Console.WriteLine("Input Direction For Model:");
-        _Direction = Console.ReadLine()!;
-        _FModel = new ModelLoad(_Direction);
+        if (File.Exists(_PathModelSave) && _NewSave == false)
+        {
 
-        Console.WriteLine("Input Direction For Model Light:");
-        _Direction = Console.ReadLine()!;
-        _LModel = new ModelLoad(_Direction);
+            _FileRead = new StreamReader(_PathModelSave);
+
+            _Line = _FileRead.ReadLine()!;
+            _FModel = new ModelLoad(_Line);
 
 
-        //Console.WriteLine("Input Coord For Model Position:");
-        //int X = Int32.Parse(Console.ReadLine());
-        //int Y = Int32.Parse(Console.ReadLine());
-        //int Z = Int32.Parse(Console.ReadLine());
-        //_ModelPos = new Vector3(X, Y, Z);
+            _Line = _FileRead.ReadLine()!;
+            _LModel = new ModelLoad(_Line);
+        }
+        /*
+        * If user got save file and agree use this file, that this file read
+        */
+        else
+        {
+            _FileWrite = new StreamWriter(_PathModelSave);
+            Console.WriteLine("Input Direction For Model:");
+            _Direction = Console.ReadLine()!;
+            _FileWrite.WriteLine(_Direction);
+            _FModel = new ModelLoad(_Direction);
 
-        //Console.WriteLine("Input Coord For Lamp Position:");
-        //int X = Int32.Parse(Console.ReadLine()!);
-        //int Y = Int32.Parse(Console.ReadLine()!);
-        //int Z = Int32.Parse(Console.ReadLine()!);
-        //_LampPos = new Vector3(X, Y, Z);
+            Console.WriteLine("Input Direction For Model Light:");
+            _Direction = Console.ReadLine()!;
+            _FileWrite.WriteLine(_Direction);
+            _LModel = new ModelLoad(_Direction);
+
+
+
+            ReturnSaveFile();
+        }
 
 
         //Use Shader
@@ -115,6 +148,15 @@ public class MainSystemEngine : GameWindow
 
         if (KeyboardState.IsKeyDown(Keys.Escape))
         {
+            //Close the save file
+            if (_FileWrite!=null)
+            {
+                _FileWrite.Close();
+            }
+            else
+            {
+
+            }
             Close();
         }
 
@@ -128,12 +170,10 @@ public class MainSystemEngine : GameWindow
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
 
-
-
         _ModelShader.UseShader();
         var _ModelF = Matrix4.Identity;
-        //model load in frag shader...
-        _Component.SetModel(_ModelShader, _Camera, _FModel, _LampPos, _ModelF);
+        _ModelF = Matrix4.CreateTranslation(_Position);
+        _Component.SetModel(_ModelShader, _Camera, ref _FModel, _LampPos, _ModelF);
 
 
 
@@ -172,11 +212,21 @@ public class MainSystemEngine : GameWindow
         
     }
 
+
+    
+    private StreamWriter ReturnSaveFile()
+    {
+        return _FileWrite;
+    }
+    private string ReturnString(string _String)
+    {
+        return _String;
+    }
     
 
+    
     
 }
-
 
 class StartupEngine
 {

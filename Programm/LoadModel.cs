@@ -27,15 +27,12 @@ public static class Convert
 public class Load
 {
     
-    private List<MeshC> _MeshComp;
-    //private List<Texture> _TextureComponent;
+    private List<MeshC> _MeshComp = new List<MeshC>();
     string _Direction;
     private Shader _Shader;
 
     public Load(string _Path)
-    {
-        //_TextureComponent = new List<Texture>();
-
+    { 
         LoadModelFromFile(_Path);
     }
 
@@ -45,9 +42,8 @@ public class Load
         AssimpContext _Import = new AssimpContext();
         Scene _Scene = _Import.ImportFile(_Path,PostProcessSteps.Triangulate);
 
-        _MeshComp = new List<MeshC>();
+        
 
-        //_Direction = _Path.Substring(0,_Path.LastIndexOf('\\'));
 
         Node(_Scene.RootNode, _Scene);
 
@@ -74,7 +70,6 @@ public class Load
 
         List<VertexMesh> _VertexG = new List<VertexMesh>();
         List<int> _Index = new List<int>();
-        //List<Texture> _TexG = new List<Texture>();
 
         for (int i = 0;i<_Mesh.VertexCount;i++)
         {
@@ -92,11 +87,11 @@ public class Load
                 Vector2 _Vec;
                 _Vec.X = _Mesh.TextureCoordinateChannels[0][i].X;
                 _Vec.Y = _Mesh.TextureCoordinateChannels[0][i].Y;
-                //_Vertex._TexCoord = _Vec;
+                
             }
             else
             {
-                //_Vertex._TexCoord = new Vector2(0.0f,0.0f);
+
             }
 
             _VertexG.Add(_Vertex);
@@ -112,55 +107,13 @@ public class Load
             }
         }
 
-        //Material _Mat = _Scene.Materials[_Mesh.MaterialIndex];
-
-        //List<Texture> _Diffuse = LoadTexture(_Mat,TextureType.Diffuse, "texture_diffuse");
-        //_Diffuse.AddRange(_Diffuse);
-
-        //List<Texture> _Specular = LoadTexture(_Mat, TextureType.Specular, "texture_specular");
-        //_Specular.AddRange(_Specular);
-
-        //List<Texture> _Normal = LoadTexture(_Mat, TextureType.Height, "texture_normal");
-        //_Normal.AddRange(_Normal);
-
-        //List<Texture> _Heigth = LoadTexture(_Mat, TextureType.Ambient, "texture_height");
-        //_Heigth.AddRange(_Heigth);
-
-        //Console.WriteLine("Output data from model. Vertex count:"+_Mesh.VertexCount+". Index count:"+_Mesh.FaceCount);
+        
 
         return new MeshC(_VertexG.ToArray(), _Index.ToArray());
 
     }
 
-    //private List<Texture> LoadTexture(Material _Material, TextureType _Type, string _TypeName)
-    //{
-    //    List<Texture> _Textures = new List<Texture>();
-
-    //    for (int i = 0; i<_Material.GetMaterialTextureCount(_Type); i++)
-    //    {
-    //        TextureSlot _Slot;
-    //        _Material.GetMaterialTexture(_Type,i,out _Slot);
-
-    //        bool _SkipTexture = false;
-    //        for (int j = 0;j<_TextureComponent.Count;i++)
-    //        {
-    //            if (_TextureComponent[j]._Path.CompareTo(_Slot.FilePath)==0)
-    //            {
-    //                _Textures.Add(_TextureComponent[j]);
-    //                _SkipTexture = true;
-    //                break;
-    //            }
-    //        }
-    //        if (!_SkipTexture)
-    //        {
-    //            Texture _Texture = Texture.Texture(_Slot.FilePath,_Direction,_TypeName);
-    //            _Textures.Add(_Texture);
-    //            _TextureComponent.Add(_Texture);
-    //        }
-            
-    //    }
-    //    return _Textures;
-    //}
+    
     
 
     //Draw model system
@@ -171,4 +124,6 @@ public class Load
             _Mesh.DrawMesh(_Shader);
         }
     }
+
+    
 }

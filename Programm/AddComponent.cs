@@ -13,7 +13,7 @@ using OpenTK.Mathematics;
 class AddComponent
 {
 
-    public void SetModel(Shader _Shader, Camera _Camera, Model _Model, Vector3 _PosModel, Matrix4 _MatrixModel)
+    public void SetModel(Shader _Shader, Camera _Camera,ref Load _Model, Vector3 _PosModel, Matrix4 _MatrixModel)
     {
         _Shader.UseShader();
         _Shader.SetMatrix4("model", _MatrixModel);
