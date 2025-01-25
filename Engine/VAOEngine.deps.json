@@ -10,6 +10,7 @@
         "dependencies": {
           "AssimpNet": "4.1.0",
           "OpenTK": "4.9.3",
+          "OpenTK.GLWpfControl": "4.3.3",
           "StbImageSharp": "2.30.15"
         },
         "runtime": {
@@ -144,6 +145,17 @@
           "lib/netstandard2.1/OpenTK.Core.dll": {
             "assemblyVersion": "4.9.3.0",
             "fileVersion": "4.9.3.0"
+          }
+        }
+      },
+      "OpenTK.GLWpfControl/4.3.3": {
+        "dependencies": {
+          "OpenTK": "4.9.3"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/GLWpfControl.dll": {
+            "assemblyVersion": "4.3.3.0",
+            "fileVersion": "4.3.3.0"
           }
         }
       },
@@ -938,6 +950,13 @@
       "sha512": "sha512-gNUBQZAoTBE3A28OMnr3xHrTXONqzvqhJ1UWGa+1iaAHkQfCU8Tw2mboNtgewBiJPGNO0hFm9EPs/a9tpAxYMw==",
       "path": "opentk.core/4.9.3",
       "hashPath": "opentk.core.4.9.3.nupkg.sha512"
+    },
+    "OpenTK.GLWpfControl/4.3.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-mbKt+ZApqYk/Ym4Ph0dnI+hfSnyXn/gWW6Ys6l3C+fMlgXLYaWpbQ+/3yNm6G1lJ3vteXGxtoMJPFYlaXi/tQw==",
+      "path": "opentk.glwpfcontrol/4.3.3",
+      "hashPath": "opentk.glwpfcontrol.4.3.3.nupkg.sha512"
     },
     "OpenTK.Graphics/4.9.3": {
       "type": "package",

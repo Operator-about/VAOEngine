@@ -127,6 +127,15 @@ public class MainSystemEngine : GameWindow
             ReturnSaveFile();
         }
 
+        int X, Y, Z = 0;
+        X = Int32.Parse(Console.ReadLine()!);
+        Y = Int32.Parse(Console.ReadLine()!);
+        Z = Int32.Parse(Console.ReadLine()!);
+        _Position = new Vector3(X,Y,Z);
+        ReturnVector3(_Position);
+
+        
+
 
         //Use Shader
         _Shader.UseShader();
@@ -171,9 +180,13 @@ public class MainSystemEngine : GameWindow
 
 
         _ModelShader.UseShader();
-        var _ModelF = Matrix4.Identity;
-        _ModelF = Matrix4.CreateTranslation(_Position);
-        _Component.SetModel(_ModelShader, _Camera, ref _FModel, _LampPos, _ModelF);
+
+
+        var _MatrixModelF = Matrix4.CreateTranslation(_Position);
+        _Component.SetModel(_ModelShader, _Camera, ref _FModel, _LampPos, _MatrixModelF);
+        
+
+
 
 
 
@@ -222,7 +235,10 @@ public class MainSystemEngine : GameWindow
     {
         return _String;
     }
-    
+    private Vector3 ReturnVector3(Vector3 _Vector3)
+    {
+        return _Vector3;
+    }
 
     
     
