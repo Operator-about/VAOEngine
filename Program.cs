@@ -22,6 +22,8 @@ public class MainSystemEngine : GameWindow
     private int _Width, _Height;
     private Vector3 _LampPos = new Vector3(1.2f, 1.0f, 5.0f);
     private Vector3 _Position = new Vector3(1.0f,1.0f,1.0f);
+    private Vector3 _Scale = new Vector3(1.0f, 1.0f, 1.0f);
+    private Vector3 _Rotation = new Vector3(1.0f,1.0f,1.0f);
 
     Shader _Shader, _ModelShader, _LampShader;
     Comp _Component;
@@ -127,6 +129,7 @@ public class MainSystemEngine : GameWindow
             ReturnSaveFile();
         }
 
+        Console.WriteLine("Input position:");
         int X, Y, Z = 0;
         X = Int32.Parse(Console.ReadLine()!);
         Y = Int32.Parse(Console.ReadLine()!);
@@ -134,7 +137,22 @@ public class MainSystemEngine : GameWindow
         _Position = new Vector3(X,Y,Z);
         ReturnVector3(_Position);
 
-        
+
+        Console.WriteLine("Input scale:");
+        X = Int32.Parse(Console.ReadLine()!);
+        Y = Int32.Parse(Console.ReadLine()!);
+        Z = Int32.Parse(Console.ReadLine()!);
+        _Scale = new Vector3(X, Y, Z);
+        ReturnVector3(_Scale);
+
+        Console.WriteLine("Input rotation:");
+        X = Int32.Parse(Console.ReadLine()!);
+        Y = Int32.Parse(Console.ReadLine()!);
+        Z = Int32.Parse(Console.ReadLine()!);
+        _Rotation = new Vector3(X, Y, Z);
+        ReturnVector3(_Rotation);
+
+
 
 
         //Use Shader
@@ -181,9 +199,15 @@ public class MainSystemEngine : GameWindow
 
         _ModelShader.UseShader();
 
+        var _ModelMatrixF = Matrix4.Identity; 
+        var _PositionModelF = Matrix4.CreateTranslation(_Position);
+        var _ScaleMatrixModelF = Matrix4.CreateScale(_Scale);
+        var _MatrixX = Matrix4.CreateRotationX(_Rotation.X);
+        var _MatrixY = Matrix4.CreateRotationY(_Rotation.Y);
+        var _MatrixZ = Matrix4.CreateRotationZ(_Rotation.Z);
 
-        var _MatrixModelF = Matrix4.CreateTranslation(_Position);
-        _Component.SetModel(_ModelShader, _Camera, ref _FModel, _LampPos, _MatrixModelF);
+        _ModelMatrixF = _PositionModelF * _ScaleMatrixModelF * (_MatrixX * _MatrixY * _MatrixZ);
+        _Component.SetModel(_ModelShader, _Camera, ref _FModel, _LampPos, _ModelMatrixF);
         
 
 
