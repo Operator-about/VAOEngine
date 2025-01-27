@@ -13,7 +13,7 @@ using OpenTK.Mathematics;
 class AddComponent
 {
 
-    public void SetModel(Shader _Shader, Camera _Camera, ref Model _Model,Vector3 _PosModel, Matrix4 _MModel)
+    public void SetModel(Shader _Shader, Camera _Camera, ref List<Model> _Model,Vector3 _PosModel, Matrix4 _MModel)
     {
         _Shader.UseShader();
         _Shader.SetMatrix4("model", _MModel);
@@ -26,7 +26,11 @@ class AddComponent
         _Shader.SetVector3("lightColor", new OpenTK.Mathematics.Vector3(3.0f, 4.0f, 1.0f));
         _Shader.SetVector3("lightPosition", _PosModel);
         _Shader.SetVector3("lightView", _Camera._Position);
-        _Model.Draw(_Shader);
+        for (int i = 0; i<_Model.Count;i++)
+        {
+            _Model[i].Draw(_Shader);
+        }
+        
     }
 
     public void SetLight(Shader _Shader, Camera _Camera,Model _Ligth, Vector3 _LampPos, Matrix4 _Model)

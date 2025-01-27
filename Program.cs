@@ -10,6 +10,7 @@ using Camera = CameraSystem;
 using Comp = AddComponent;
 using System.Runtime;
 using System.Threading;
+using OpenTK.Windowing.Common.Input;
 
 
 
@@ -26,21 +27,19 @@ public class MainSystemEngine : GameWindow
     private Vector3 _Rotation = new Vector3(1.0f,1.0f,1.0f);
 
     Shader _Shader, _ModelShader, _LampShader;
-    Comp _Component;
+    private List<Comp> _Component = new List<Comp>();
     ModelLoad _LModel, _FModel;
-    Camera _Camera;
+    private List<ModelLoad> _Model = new List<ModelLoad>();
+    private Camera _Camera;
     StreamWriter _FileWrite;
     StreamReader _FileRead;
+    private Thread _Flow;
     
     private string _Line;
     private string _Direction, _PathModelSave;
     private System.Numerics.Vector3 _Color = new System.Numerics.Vector3(2.0f,5.0f,2.0f);
     private bool _NewSave;
-
-
-
-    //private int X, Y, Z;
-    
+    private bool _FlowOpen = true;
 
     public MainSystemEngine(string _Title) : base(GameWindowSettings.Default, new NativeWindowSettings())
     {
@@ -53,6 +52,10 @@ public class MainSystemEngine : GameWindow
     {
         base.OnLoad();
 
+
+
+        //Load Camera
+        _Camera = new Camera(Vector3.UnitZ * 3, _Width / (float)_Height);
 
         Console.WriteLine("Input route to save file");
         //Path to save file
@@ -70,11 +73,10 @@ public class MainSystemEngine : GameWindow
 
 
 
-        //Load component for add
-        _Component = new Comp();
+        Comp _LoadComponent = new Comp();
+        _Component.Add(_LoadComponent);
 
-        //Load Camera
-        _Camera = new Camera(Vector3.UnitZ * 3, _Width / (float)_Height);
+
 
         /*Load file system
          * If user got save file, that user maybe use this save file
@@ -103,10 +105,13 @@ public class MainSystemEngine : GameWindow
 
             _Line = _FileRead.ReadLine()!;
             _FModel = new ModelLoad(_Line);
+            _Model.Add(_FModel);
 
 
             _Line = _FileRead.ReadLine()!;
             _LModel = new ModelLoad(_Line);
+
+
         }
         /*
         * If user got save file and agree use this file, that this file read
@@ -118,6 +123,8 @@ public class MainSystemEngine : GameWindow
             _Direction = Console.ReadLine()!;
             _FileWrite.WriteLine(_Direction);
             _FModel = new ModelLoad(_Direction);
+            _Model.Add(_FModel);
+            //ReturnSaveFile();
 
             Console.WriteLine("Input Direction For Model Light:");
             _Direction = Console.ReadLine()!;
@@ -134,7 +141,7 @@ public class MainSystemEngine : GameWindow
         X = Int32.Parse(Console.ReadLine()!);
         Y = Int32.Parse(Console.ReadLine()!);
         Z = Int32.Parse(Console.ReadLine()!);
-        _Position = new Vector3(X,Y,Z);
+        _Position = new Vector3(X, Y, Z);
         ReturnVector3(_Position);
 
 
@@ -158,6 +165,11 @@ public class MainSystemEngine : GameWindow
         //Use Shader
         _Shader.UseShader();
         CursorState = CursorState.Grabbed;
+
+        
+
+     
+        
     }
 
     protected override void OnUpdateFrame(FrameEventArgs args)
@@ -196,6 +208,12 @@ public class MainSystemEngine : GameWindow
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
+        if (_FlowOpen==true)
+        {
+            _Flow = new Thread(Function);
+            _Flow.Start();
+            _FlowOpen = false;
+        }
 
         _ModelShader.UseShader();
 
@@ -207,19 +225,14 @@ public class MainSystemEngine : GameWindow
         var _MatrixZ = Matrix4.CreateRotationZ(_Rotation.Z);
 
         _ModelMatrixF = _PositionModelF * _ScaleMatrixModelF * (_MatrixX * _MatrixY * _MatrixZ);
-        _Component.SetModel(_ModelShader, _Camera, ref _FModel, _LampPos, _ModelMatrixF);
-        
+        for (int i = 0; i<_Component.Count;i++)
+        {
+            _Component[i].SetModel(_ModelShader, _Camera, ref _Model, _LampPos, _ModelMatrixF);
 
-
-
-
-
-
-
-
-        //Light position
-        var _ModelLight = Matrix4.CreateTranslation(_LampPos);
-        _Component.SetLight(_LampShader, _Camera, _LModel, _LampPos, _ModelLight);
+            //Light position
+            var _ModelLight = Matrix4.CreateTranslation(_LampPos);
+            _Component[i].SetLight(_LampShader, _Camera, _LModel, _LampPos, _ModelLight);
+        }
 
         _Shader.UseShader();
         int _Location = GL.GetUniformLocation(_Shader._Count, "ourColor");
@@ -239,7 +252,6 @@ public class MainSystemEngine : GameWindow
         _Width = e.Width;
         _Height = e.Height; 
         //_Camera._Aspect = e.Width / (float)e.Height;
-
 
     }
 
@@ -262,6 +274,54 @@ public class MainSystemEngine : GameWindow
     private Vector3 ReturnVector3(Vector3 _Vector3)
     {
         return _Vector3;
+    }
+    private void Function()
+    {
+        Console.WriteLine("Input command:");
+        string _Command = Console.ReadLine()!;
+        if (_Command=="set position")
+        {
+            int X, Y, Z = 0;
+            Console.WriteLine("Input new position:");
+            X = Int32.Parse(Console.ReadLine()!);
+            Y = Int32.Parse(Console.ReadLine()!);
+            Z = Int32.Parse(Console.ReadLine()!);
+            _Position = new Vector3(X, Y, Z);
+            ReturnVector3(_Position);
+            _FlowOpen = true;   
+        }
+        else if (_Command=="set scale")
+        {
+            int X, Y, Z = 0;
+            Console.WriteLine("Input new scale:");
+            X = Int32.Parse(Console.ReadLine()!);
+            Y = Int32.Parse(Console.ReadLine()!);
+            Z = Int32.Parse(Console.ReadLine()!);
+            _Scale = new Vector3(X, Y, Z);
+            ReturnVector3(_Scale);
+            _FlowOpen = true;
+        }
+        else if (_Command == "set rotation")
+        {
+            int X, Y, Z = 0;
+            Console.WriteLine("Input new rotation:");
+            X = Int32.Parse(Console.ReadLine()!);
+            Y = Int32.Parse(Console.ReadLine()!);
+            Z = Int32.Parse(Console.ReadLine()!);
+            _Rotation = new Vector3(X, Y, Z);
+            ReturnVector3(_Rotation);
+            _FlowOpen = true;
+        }
+        else if (_Command=="Help!")
+        {
+            Console.WriteLine("Now avaible command: set position, set scale, set rotation");
+            _FlowOpen = true;
+        }
+        else
+        {
+            Console.WriteLine("This command not avaible!");
+            _FlowOpen = true;
+        }
     }
 
     
