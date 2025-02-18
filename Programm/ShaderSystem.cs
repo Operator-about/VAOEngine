@@ -60,11 +60,11 @@ public class ShaderSystem
         GL.UseProgram(_Count);    
     }
 
-    public void SetMatrix4(string _Name,Matrix4 _Parameter)
+    public void SetMatrix4(string _Name, Matrix4 _Parameter)
     {
         GL.UseProgram(_Count);
-       
-        GL.UniformMatrix4(GL.GetUniformLocation(_Count, _Name),true, ref _Parameter);
+
+        GL.UniformMatrix4(GL.GetUniformLocation(_Count, _Name), true, ref _Parameter);
     }
 
     public void SetVector3(string _Name, Vector3 _Parameter)

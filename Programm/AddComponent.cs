@@ -13,35 +13,32 @@ using OpenTK.Mathematics;
 class AddComponent
 {
 
-    public void SetModel(Shader _Shader, Camera _Camera, ref List<Model> _Model,Vector3 _PosModel, Matrix4 _MModel)
+    public void SetModel(Shader _Shader, Camera _Camera, List<Model> _Model, Vector3 _LightModel, Matrix4 _Matrix)
     {
-        _Shader.UseShader();
-        _Shader.SetMatrix4("model", _MModel);
-        
-
-        
-        _Shader.SetMatrix4("view", _Camera.GetView());
-        _Shader.SetMatrix4("proj", _Camera.GetProjection());
-        _Shader.SetVector3("objColor", new OpenTK.Mathematics.Vector3(0.0f, 0.1f, 0.31f));
-        _Shader.SetVector3("lightColor", new OpenTK.Mathematics.Vector3(3.0f, 4.0f, 1.0f));
-        _Shader.SetVector3("lightPosition", _PosModel);
-        _Shader.SetVector3("lightView", _Camera._Position);
-        for (int i = 0; i<_Model.Count;i++)
-        {
-            _Model[i].Draw(_Shader);
-        }
+        //_Shader.UseShader();
+        //_Shader.SetMatrix4("model", _Matrix);
+        //_Shader.SetMatrix4("view", _Camera.GetView());
+        //_Shader.SetMatrix4("proj", _Camera.GetProjection());
+        //_Shader.SetVector3("objColor", new Vector3(0.0f, 0.1f, 0.31f));
+        //_Shader.SetVector3("lightColor", new Vector3(3.0f, 4.0f, 1.0f));
+        //_Shader.SetVector3("lightPosition", _LightModel);
+        //_Shader.SetVector3("lightView", _Camera._Position);
+        //foreach (var _OutModel in _Model)
+        //{
+        //    _OutModel.Draw(_Shader);
+        //}
         
     }
 
-    public void SetLight(Shader _Shader, Camera _Camera,Model _Ligth, Vector3 _LampPos, Matrix4 _Model)
+    public void SetLight(Shader _Shader, Camera _Camera, Model _Ligth, Vector3 _LampPos, Matrix4 _Model)
     {
-        
+
         _Shader.UseShader();
         _Shader.SetMatrix4("model", _Model);
         _Shader.SetMatrix4("view", _Camera.GetView());
         _Shader.SetMatrix4("proj", _Camera.GetProjection());
-        
 
-        _Ligth.Draw(_Shader);
+
+        _Ligth.Draw(_Shader, _Camera);
     }
 }

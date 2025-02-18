@@ -7,16 +7,19 @@ using System.Threading.Tasks;
 using OpenTK;
 using Shader = ShaderSystem;
 using Texture = TextureSystem;
+using Camera = CameraSystem;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Assimp;
 
 public struct MeshPosScaleRot
 {
     public Vector3 _Position;
     public Vector3 _Scale;
     public Vector3 _Rotation;
+    
 }
 
 
@@ -24,7 +27,7 @@ public struct VertexMesh
 {
     public Vector3 _Position;
     public Vector3 _Normal;
-    //public Vector2 _TexCoord;
+    public Vector2 _TexCoord;
 }
 
 
@@ -33,27 +36,40 @@ public class MeshComponent
 
     private readonly int _VAO;
     private readonly int _IndexG;
-    
+    public MeshPosScaleRot _MatrixModel;
 
-    
-
-    public void DrawMesh(Shader _Shader)
+    public void DrawMesh(Shader _Shader, Camera _Camera)
     {
         GL.BindVertexArray(_VAO);
 
 
 
-        GL.DrawElements(PrimitiveType.Triangles, _IndexG, DrawElementsType.UnsignedInt, 0);
-        GL.BindVertexArray(0);
+        var _ModelMatrixF = Matrix4.Identity;
+        var _PositionModelF = Matrix4.CreateTranslation(_MatrixModel._Position);
+        var _ScaleMatrixModelF = Matrix4.CreateScale(_MatrixModel._Scale);
+        var _MatrixX = Matrix4.CreateRotationX(_MatrixModel._Rotation.X);
+        var _MatrixY = Matrix4.CreateRotationY(_MatrixModel._Rotation.Y);
+        var _MatrixZ = Matrix4.CreateRotationZ(_MatrixModel._Rotation.Z);
 
-        
+        _ModelMatrixF = _PositionModelF * _ScaleMatrixModelF * (_MatrixX * _MatrixY * _MatrixZ);
+
+        _Shader.UseShader();
+        _Shader.SetMatrix4("model", _ModelMatrixF);
+        _Shader.SetMatrix4("view", _Camera.GetView());
+        _Shader.SetMatrix4("proj", _Camera.GetProjection());
+        _Shader.SetVector3("objColor", new Vector3(0.0f, 0.1f, 0.31f));
+        _Shader.SetVector3("lightColor", new Vector3(3.0f, 4.0f, 1.0f));
+        _Shader.SetVector3("lightPosition", new Vector3(1.0f,1.0f,1.0f));
+        _Shader.SetVector3("lightView", _Camera._Position);
+
+        GL.DrawElements(OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles, _IndexG, DrawElementsType.UnsignedInt, 0);
+        GL.BindVertexArray(0);     
     }
 
     public MeshComponent(Span<VertexMesh> _Vertex, Span<int> _Index)
     {
         //this._TextureList = _Tex;   
         _IndexG = _Index.Length;
-
 
 
         //Bind
@@ -85,10 +101,8 @@ public class MeshComponent
         GL.EnableVertexAttribArray(1);
         GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._Normal)));
 
-        //Console.WriteLine("Load Attribute: 2,2");
-        //GL.EnableVertexAttribArray(2);
-        //GL.VertexAttribPointer(2,2,VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._TexCoord)));
-        
+        GL.EnableVertexAttribArray(2);
+        GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._TexCoord)));
 
         GL.BindVertexArray(0);
     }

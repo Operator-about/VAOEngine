@@ -7,8 +7,10 @@ using OpenTK.Mathematics;
 using Shader = ShaderSystem;
 using MeshC = MeshComponent;
 using Texture = TextureSystem;
+using CameraSys = CameraSystem;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using OpenTK.Windowing.Desktop;
 
 public static class Convert
 {
@@ -30,6 +32,7 @@ public class Load
     private List<MeshC> _MeshComp = new List<MeshC>();
     string _Direction;
     private Shader _Shader;
+    public MeshC _OutModel;
 
     public Load(string _Path)
     { 
@@ -41,9 +44,6 @@ public class Load
      
         AssimpContext _Import = new AssimpContext();
         Scene _Scene = _Import.ImportFile(_Path,PostProcessSteps.Triangulate);
-
-        
-
 
         Node(_Scene.RootNode, _Scene);
 
@@ -87,16 +87,17 @@ public class Load
                 Vector2 _Vec;
                 _Vec.X = _Mesh.TextureCoordinateChannels[0][i].X;
                 _Vec.Y = _Mesh.TextureCoordinateChannels[0][i].Y;
-                
+                _Vertex._TexCoord = _Vec;
             }
             else
             {
 
             }
+            
 
             _VertexG.Add(_Vertex);
         }
-
+        
         //Load Index
         for (int i = 0; i<_Mesh.FaceCount;i++)
         {
@@ -117,11 +118,12 @@ public class Load
     
 
     //Draw model system
-    public void Draw(Shader _Shader)
+    public void Draw(Shader _Shader, CameraSys _Camera)
     {
         foreach (MeshC _Mesh in _MeshComp)
         {
-            _Mesh.DrawMesh(_Shader);
+            _OutModel = _Mesh;
+            _Mesh.DrawMesh(_Shader, _Camera);
         }
     }
 
