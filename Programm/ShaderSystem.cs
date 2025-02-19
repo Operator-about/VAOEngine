@@ -10,7 +10,6 @@ using OpenTK.Mathematics;
 public class ShaderSystem
 {
     public int _Count;
-    private readonly Dictionary<string, int> _UnifLoc;
 
     public ShaderSystem(string _VertexPathShader, string _FragPathShader)
     {

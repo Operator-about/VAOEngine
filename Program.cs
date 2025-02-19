@@ -3,15 +3,9 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
-using System.IO;
 using Shader = ShaderSystem;
 using ModelLoad = Load;
 using Camera = CameraSystem;
-using Comp = AddComponent;
-using System.Runtime;
-using System.Threading;
-using System.ComponentModel;
-using System.Collections.Concurrent;
 
 
 
@@ -22,14 +16,11 @@ public class MainSystemEngine : GameWindow
 {
 
     private int _Width, _Height;
-    private Vector3 _LampPos = new Vector3(1.2f, 1.0f, 5.0f);
     private Vector3 _Position = new Vector3(1.0f, 1.0f, 1.0f);
     private Vector3 _Scale = new Vector3(1.0f, 1.0f, 1.0f);
     private Vector3 _Rotation = new Vector3(1.0f, 1.0f, 1.0f);
 
     Shader _Shader, _ModelShader, _LampShader;
-    private Comp _Component;
-    ModelLoad _LModel;
     private List<ModelLoad> _ModelLoader;
     Camera _Camera;
     StreamWriter _FileWrite;
@@ -40,10 +31,6 @@ public class MainSystemEngine : GameWindow
     private System.Numerics.Vector3 _Color = new System.Numerics.Vector3(2.0f, 5.0f, 2.0f);
     private bool _NewSave;
     private bool _Flow = true;
-
-
-
-    //private int X, Y, Z;
 
 
     public MainSystemEngine(string _Title) : base(GameWindowSettings.Default, new NativeWindowSettings())
@@ -73,12 +60,10 @@ public class MainSystemEngine : GameWindow
         GL.Enable(EnableCap.DepthTest);
 
 
-
-        //Load component for add
-        _Component = new Comp();
-
         //Load Camera
         _Camera = new Camera(Vector3.UnitZ * 3, _Width / (float)_Height);
+
+
         _ModelLoader = new List<ModelLoad>();
 
         /*Load file system
@@ -109,19 +94,13 @@ public class MainSystemEngine : GameWindow
             _Line = _FileRead.ReadLine()!;
             ModelLoad _LocalModel = new ModelLoad(_Line);
             _ModelLoader.Add(_LocalModel);
-
-
-
-
-
-            _Line = _FileRead.ReadLine()!;
-            _LModel = new ModelLoad(_Line);
         }
         /*
         * If user got save file and agree use this file, that this file read
         */
         else
         {
+            //New save: new model
             _FileWrite = new StreamWriter(_PathModelSave);
             Console.WriteLine("Input Direction For Model:");
             _Direction = Console.ReadLine()!;
@@ -130,18 +109,11 @@ public class MainSystemEngine : GameWindow
             _ModelLoader.Add(_LocalModel);
 
 
-
-
-            Console.WriteLine("Input Direction For Model Light:");
-            _Direction = Console.ReadLine()!;
-            _FileWrite.WriteLine(_Direction);
-            _LModel = new ModelLoad(_Direction);
-
-
-
+            //Save
             ReturnSaveFile();
         }
 
+        //Position
         Console.WriteLine("Input position:");
         int X, Y, Z = 0;
         X = Int32.Parse(Console.ReadLine()!);
@@ -150,7 +122,7 @@ public class MainSystemEngine : GameWindow
         _Position = new Vector3(X, Y, Z);
         ReturnVector3(_Position);
 
-
+        //Scale
         Console.WriteLine("Input scale:");
         X = Int32.Parse(Console.ReadLine()!);
         Y = Int32.Parse(Console.ReadLine()!);
@@ -158,6 +130,8 @@ public class MainSystemEngine : GameWindow
         _Scale = new Vector3(X, Y, Z);
         ReturnVector3(_Scale);
 
+
+        //Rotation
         Console.WriteLine("Input rotation:");
         X = Int32.Parse(Console.ReadLine()!);
         Y = Int32.Parse(Console.ReadLine()!);
@@ -215,7 +189,7 @@ public class MainSystemEngine : GameWindow
 
         _ModelShader.UseShader();
 
-        
+        //Render model
         foreach (var _OutModelLoader in _ModelLoader)
         {
             _OutModelLoader.Draw(_ModelShader, _Camera);
@@ -224,13 +198,9 @@ public class MainSystemEngine : GameWindow
             _OutModelLoader._OutModel._MatrixModel._Rotation.Y = _Rotation.Y;
             _OutModelLoader._OutModel._MatrixModel._Rotation.Z = _Rotation.Z;
             _OutModelLoader._OutModel._MatrixModel._Scale = _Scale;
-            
         }
 
-        //Light position
-        //var _ModelLight = Matrix4.CreateTranslation(_LampPos);
-        //_Component.SetLight(_LampShader, _Camera, _LModel, _LampPos, _ModelLight);
-
+        //Use main shader
         _Shader.UseShader();
         int _Location = GL.GetUniformLocation(_Shader._Count, "ourColor");
         GL.Uniform4(_Location, _Color.X, _Color.Y, _Color.Z, 1.0f);

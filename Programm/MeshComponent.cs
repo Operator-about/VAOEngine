@@ -40,10 +40,11 @@ public class MeshComponent
 
     public void DrawMesh(Shader _Shader, Camera _Camera)
     {
+        //Bind VAO
         GL.BindVertexArray(_VAO);
 
 
-
+        //Set matrix for model
         var _ModelMatrixF = Matrix4.Identity;
         var _PositionModelF = Matrix4.CreateTranslation(_MatrixModel._Position);
         var _ScaleMatrixModelF = Matrix4.CreateScale(_MatrixModel._Scale);
@@ -53,6 +54,7 @@ public class MeshComponent
 
         _ModelMatrixF = _PositionModelF * _ScaleMatrixModelF * (_MatrixX * _MatrixY * _MatrixZ);
 
+        //Use shader and bind
         _Shader.UseShader();
         _Shader.SetMatrix4("model", _ModelMatrixF);
         _Shader.SetMatrix4("view", _Camera.GetView());
@@ -62,6 +64,7 @@ public class MeshComponent
         _Shader.SetVector3("lightPosition", new Vector3(1.0f,1.0f,1.0f));
         _Shader.SetVector3("lightView", _Camera._Position);
 
+        //Draw
         GL.DrawElements(OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles, _IndexG, DrawElementsType.UnsignedInt, 0);
         GL.BindVertexArray(0);     
     }
@@ -101,6 +104,8 @@ public class MeshComponent
         GL.EnableVertexAttribArray(1);
         GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._Normal)));
 
+
+        //TexCoord
         GL.EnableVertexAttribArray(2);
         GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._TexCoord)));
 
