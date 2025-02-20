@@ -1,16 +1,10 @@
-﻿using System;
-using System.IO;
-using Assimp;
-using OpenTK;
-using OpenTK.Graphics.OpenGL4;
+﻿using Assimp;
 using OpenTK.Mathematics;
 using Shader = ShaderSystem;
 using MeshC = MeshComponent;
-using Texture = TextureSystem;
 using CameraSys = CameraSystem;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using OpenTK.Windowing.Desktop;
+
 
 public static class Convert
 {
@@ -30,8 +24,6 @@ public class Load
 {
     
     private List<MeshC> _MeshComp = new List<MeshC>();
-    string _Direction;
-    private Shader _Shader;
     public MeshC _OutModel;
 
     public Load(string _Path)
@@ -108,8 +100,8 @@ public class Load
             }
         }
 
-        
 
+        Console.WriteLine($"Count value:{_MeshComp.Count}");
         return new MeshC(_VertexG.ToArray(), _Index.ToArray());
 
     }
@@ -123,7 +115,7 @@ public class Load
         foreach (MeshC _Mesh in _MeshComp)
         {
             _OutModel = _Mesh;
-            _Mesh.DrawMesh(_Shader, _Camera);
+            _OutModel.DrawMesh(_Shader, _Camera);
         }
     }
 

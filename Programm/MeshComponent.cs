@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK;
-using Shader = ShaderSystem;
-using Texture = TextureSystem;
+﻿using Shader = ShaderSystem;
 using Camera = CameraSystem;
+using MainCore = MainSystemEngine;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Assimp;
+
 
 public struct MeshPosScaleRot
 {
@@ -37,6 +30,7 @@ public class MeshComponent
     private readonly int _VAO;
     private readonly int _IndexG;
     public MeshPosScaleRot _MatrixModel;
+    public MainCore _Core;
 
     public void DrawMesh(Shader _Shader, Camera _Camera)
     {
@@ -81,23 +75,23 @@ public class MeshComponent
         int _EBO = GL.GenBuffer();
 
         GL.BindVertexArray(_VAO);
-     
-  
+
+
 
         //Report data in buffer
         Console.WriteLine("Report data in buffer: Vertex");
         GL.BindBuffer(BufferTarget.ArrayBuffer, _VBO);
-        GL.BufferData(BufferTarget.ArrayBuffer, _Vertex.Length * Unsafe.SizeOf<VertexMesh>(),ref MemoryMarshal.GetReference(_Vertex), BufferUsageHint.StaticDraw);
-        
+        GL.BufferData(BufferTarget.ArrayBuffer, _Vertex.Length * Unsafe.SizeOf<VertexMesh>(), ref MemoryMarshal.GetReference(_Vertex), BufferUsageHint.StaticDraw);
+
         Console.WriteLine("Report data in buffer: Index");
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _EBO);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, _Index.Length * sizeof(int),ref MemoryMarshal.GetReference(_Index), BufferUsageHint.StaticDraw);
+        GL.BufferData(BufferTarget.ElementArrayBuffer, _Index.Length * sizeof(int), ref MemoryMarshal.GetReference(_Index), BufferUsageHint.StaticDraw);
 
         //Position
         Console.WriteLine("Load Attribute: 0,3");
         GL.EnableVertexAttribArray(0);
         GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._Position)));
-        
+
 
         //Normal
         Console.WriteLine("Load Attribute: 1,3");
