@@ -23,7 +23,7 @@ public class MainSystemEngine : GameWindow
     Shader _Shader, _ModelShader, _LampShader;
     private List<ModelLoad> _ModelLoader;
     Camera _Camera;
-    StreamWriter _FileWrite;
+
 
     public readonly object _Lock = new object();
     private string _Line;
@@ -70,39 +70,15 @@ public class MainSystemEngine : GameWindow
 
             _ModelLoader = new List<ModelLoad>();
 
-            /*Load file system
-             * If user got save file, that user maybe use this save file
-            */
-            //if (File.Exists(_PathModelSave))
-            //{
-            //    Console.WriteLine("Input: Yes. If you want use save file:");
-            //    if (Console.ReadLine()! == "Yes" && File.Exists(_PathModelSave))
-            //    {
-            //        _NewSave = false;
-            //    }
-            //    else
-            //    {
-            //        _NewSave = true;
-            //    }
-            //}
-            //else
-            //{
-            //    _NewSave = true;
-            //}
+            
 
             //Use Shader
             _Shader.UseShader();
             CursorState = CursorState.Grabbed;
 
-            Task.Run(() =>
-            {
-                while (true)
-                {
-                    ModelLoaderFunc();
-                    Context.MakeNoneCurrent();
-                }
-            });
             Context.MakeNoneCurrent();
+            
+            
         }
     }
 
@@ -121,15 +97,7 @@ public class MainSystemEngine : GameWindow
 
         if (KeyboardState.IsKeyDown(Keys.Escape))
         {
-            //Close the save file
-            if (_FileWrite != null)
-            {
-                _FileWrite.Close();
-            }
-            else
-            {
-
-            }
+            
             Close();
         }
 
@@ -145,7 +113,13 @@ public class MainSystemEngine : GameWindow
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            
+            //Thread for load model
+            if (_Flow==true)
+            {
+                _Flow = false;
+                Thread _FlowThread = new Thread(Command);
+                _FlowThread.Start();
+            }
 
             _ModelShader.UseShader();
 
@@ -192,10 +166,7 @@ public class MainSystemEngine : GameWindow
 
 
 
-    private StreamWriter ReturnSaveFile()
-    {
-        return _FileWrite;
-    }
+    
     private string ReturnString(string _String)
     {
         return _String;
@@ -204,19 +175,38 @@ public class MainSystemEngine : GameWindow
     {
         return _Vector3;
     }
+
+    //Command function
+    private void Command()
+    {
+        Console.WriteLine("Input command: model or other:");
+        string _Command = Console.ReadLine()!;
+        if (_Command=="model")
+        {
+            ModelLoaderFunc();
+        }
+        else
+        {
+            _Flow = true;
+        }
+    }
+
+    //Model load function
     private void ModelLoaderFunc()
     {
-        Task.Run (() =>
+        Task.Run(() =>
         {
             lock (_Lock)
             {
-                Context.MakeCurrent();
-                Console.WriteLine("Input Direction For Model:");
+                
+                Console.WriteLine("Input Direction model:");
                 _Direction = Console.ReadLine()!;
-                ModelLoad _LocalModel = new ModelLoad(_Direction);
-                _ModelLoader.Add(_LocalModel);
+                Context.MakeCurrent();
+                _ModelLoader.Add(new ModelLoad(_Direction));
                 Context.MakeNoneCurrent();
+                _Flow = true;
             }
+
         });
     }
     
