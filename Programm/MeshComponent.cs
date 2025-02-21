@@ -12,7 +12,7 @@ public struct MeshPosScaleRot
     public Vector3 _Position;
     public Vector3 _Scale;
     public Vector3 _Rotation;
-    
+    public Vector3 _Color;
 }
 
 
@@ -30,7 +30,6 @@ public class MeshComponent
     private readonly int _VAO;
     private readonly int _IndexG;
     public MeshPosScaleRot _MatrixModel;
-    public MainCore _Core;
 
     public void DrawMesh(Shader _Shader, Camera _Camera)
     {
@@ -53,13 +52,11 @@ public class MeshComponent
         _Shader.SetMatrix4("model", _ModelMatrixF);
         _Shader.SetMatrix4("view", _Camera.GetView());
         _Shader.SetMatrix4("proj", _Camera.GetProjection());
-        _Shader.SetVector3("objColor", new Vector3(0.0f, 0.1f, 0.31f));
-        _Shader.SetVector3("lightColor", new Vector3(3.0f, 4.0f, 1.0f));
-        _Shader.SetVector3("lightPosition", new Vector3(1.0f,1.0f,1.0f));
-        _Shader.SetVector3("lightView", _Camera._Position);
+        _Shader.SetVector3("objColor", _MatrixModel._Color);
+        
 
         //Draw
-        GL.DrawElements(OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles, _IndexG, DrawElementsType.UnsignedInt, 0);
+        GL.DrawElements(PrimitiveType.Triangles, _IndexG, DrawElementsType.UnsignedInt, 0);
         GL.BindVertexArray(0);     
     }
 

@@ -6,6 +6,7 @@ using OpenTK.Mathematics;
 using Shader = ShaderSystem;
 using ModelLoad = Load;
 using Camera = CameraSystem;
+using Light = LightComponent;
 
 
 
@@ -16,13 +17,13 @@ public class MainSystemEngine : GameWindow
 {
 
     private int _Width, _Height;
-    private Vector3 _Position = new Vector3(1.0f, 1.0f, 1.0f);
-    private Vector3 _Scale = new Vector3(1.0f, 1.0f, 1.0f);
-    private Vector3 _Rotation = new Vector3(1.0f, 1.0f, 1.0f);
 
-    Shader _Shader, _ModelShader, _LampShader;
+
+    private Shader _Shader, _ModelShader, _LampShader;
     private List<ModelLoad> _ModelLoader;
-    Camera _Camera;
+    private List<Light> _LightLoader;
+    private ModelLoad _LocalModel;
+    private Camera _Camera;
 
 
     public readonly object _Lock = new object();
@@ -69,7 +70,7 @@ public class MainSystemEngine : GameWindow
 
 
             _ModelLoader = new List<ModelLoad>();
-
+            _LightLoader = new List<Light>();
             
 
             //Use Shader
@@ -126,11 +127,11 @@ public class MainSystemEngine : GameWindow
             for (int i = 0; i < _ModelLoader.Count; i++)
             {
                 _ModelLoader[i].Draw(_ModelShader, _Camera);
-                _ModelLoader[i]._OutModel._MatrixModel._Position = new Vector3(1, 1, 1);
-                _ModelLoader[i]._OutModel._MatrixModel._Rotation.X = _Rotation.X;
-                _ModelLoader[i]._OutModel._MatrixModel._Rotation.Y = _Rotation.Y;
-                _ModelLoader[i]._OutModel._MatrixModel._Rotation.Z = _Rotation.Z;
                 _ModelLoader[i]._OutModel._MatrixModel._Scale = new Vector3(1, 1, 1);
+            }
+            for (int i = 0;i<_LightLoader.Count;i++)
+            {
+                _LightLoader[i].DrawLight(_ModelShader, _Camera);
             }
 
 
@@ -171,10 +172,6 @@ public class MainSystemEngine : GameWindow
     {
         return _String;
     }
-    private Vector3 ReturnVector3(Vector3 _Vector3)
-    {
-        return _Vector3;
-    }
 
     //Command function
     private void Command()
@@ -184,6 +181,50 @@ public class MainSystemEngine : GameWindow
         if (_Command=="model")
         {
             ModelLoaderFunc();
+        }
+        else if (_Command=="light")
+        {
+            LightLoaderFunc();
+        }
+        else if (_Command == "position model")
+        {
+            Console.WriteLine("Input ID model(only in type Int32):");
+            int _IDModel = Int32.Parse(Console.ReadLine()!);
+            Console.WriteLine("Set new position(X,Y,Z):");
+            _ModelLoader[_IDModel]._OutModel._MatrixModel._Position.X = Int32.Parse(Console.ReadLine()!);
+            _ModelLoader[_IDModel]._OutModel._MatrixModel._Position.Y = Int32.Parse(Console.ReadLine()!);
+            _ModelLoader[_IDModel]._OutModel._MatrixModel._Position.Z = Int32.Parse(Console.ReadLine()!);
+            _Flow = true;
+        }
+        else if (_Command == "rotation model")
+        {
+            Console.WriteLine("Input ID model(only in type Int32):");
+            int _IDModel = Int32.Parse(Console.ReadLine()!);
+            Console.WriteLine("Set new rotation(X,Y,Z):");
+            _ModelLoader[_IDModel]._OutModel._MatrixModel._Rotation.X = Int32.Parse(Console.ReadLine()!);
+            _ModelLoader[_IDModel]._OutModel._MatrixModel._Rotation.Y = Int32.Parse(Console.ReadLine()!);
+            _ModelLoader[_IDModel]._OutModel._MatrixModel._Rotation.Z = Int32.Parse(Console.ReadLine()!);
+            _Flow = true;
+        }
+        else if (_Command == "scale model")
+        {
+            Console.WriteLine("Input ID model(only in type Int32):");
+            int _IDModel = Int32.Parse(Console.ReadLine()!);
+            Console.WriteLine("Set new scale(X,Y,Z):");
+            _ModelLoader[_IDModel]._OutModel._MatrixModel._Scale.X = Int32.Parse(Console.ReadLine()!);
+            _ModelLoader[_IDModel]._OutModel._MatrixModel._Scale.Y = Int32.Parse(Console.ReadLine()!);
+            _ModelLoader[_IDModel]._OutModel._MatrixModel._Scale.Z = Int32.Parse(Console.ReadLine()!);
+            _Flow = true;
+        }
+        else if (_Command == "color model")
+        {
+            Console.WriteLine("Input ID model(only in type Int32):");
+            int _IDModel = Int32.Parse(Console.ReadLine()!);
+            Console.WriteLine("Set new color(X,Y,Z):");
+            _ModelLoader[_IDModel]._OutModel._MatrixModel._Color.X = Int32.Parse(Console.ReadLine()!);
+            _ModelLoader[_IDModel]._OutModel._MatrixModel._Color.Y = Int32.Parse(Console.ReadLine()!);
+            _ModelLoader[_IDModel]._OutModel._MatrixModel._Color.Z = Int32.Parse(Console.ReadLine()!);
+            _Flow = true;
         }
         else
         {
@@ -202,11 +243,28 @@ public class MainSystemEngine : GameWindow
                 Console.WriteLine("Input Direction model:");
                 _Direction = Console.ReadLine()!;
                 Context.MakeCurrent();
-                _ModelLoader.Add(new ModelLoad(_Direction));
+                _LocalModel = new ModelLoad(_Direction);
+                _ModelLoader.Add(_LocalModel);
+                Console.WriteLine($"Model ID:{_ModelLoader.Count}");
                 Context.MakeNoneCurrent();
                 _Flow = true;
             }
 
+        });
+    }
+    private void LightLoaderFunc()
+    {
+        Task.Run(() =>
+        {
+            lock (_Lock)
+            {
+                Context.MakeCurrent();
+                Light _LocalLight = new Light();
+                _LocalLight.AddPointLight();
+                _LightLoader.Add(_LocalLight);
+                Context.MakeNoneCurrent();
+                _Flow = true;
+            }
         });
     }
     
