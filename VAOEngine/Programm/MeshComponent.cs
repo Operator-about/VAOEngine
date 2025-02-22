@@ -1,10 +1,10 @@
 ﻿using Shader = ShaderSystem;
 using Camera = CameraSystem;
-using MainCore = MainSystemEngine;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
 
 
 public struct MeshPosScaleRot
@@ -103,5 +103,6 @@ public class MeshComponent
         GL.BindVertexArray(0);
     }
 }
+
 
 

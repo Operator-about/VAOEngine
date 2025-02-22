@@ -127,7 +127,6 @@ public class MainSystemEngine : GameWindow
             for (int i = 0; i < _ModelLoader.Count; i++)
             {
                 _ModelLoader[i].Draw(_ModelShader, _Camera);
-                _ModelLoader[i]._OutModel._MatrixModel._Scale = new Vector3(1, 1, 1);
             }
             for (int i = 0;i<_LightLoader.Count;i++)
             {

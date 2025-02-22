@@ -27,7 +27,8 @@ public class Load
     public MeshC _OutModel;
 
     public Load(string _Path)
-    { 
+    {
+
         LoadModelFromFile(_Path);
     }
 
