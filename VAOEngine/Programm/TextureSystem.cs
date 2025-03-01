@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Platform.Windows;
 using StbImageSharp;
+using System.IO;
 
 public class TextureSystem
 {

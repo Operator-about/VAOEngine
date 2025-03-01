@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.11.35431.28
+VisualStudioVersion = 17.13.35806.99 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VAOEngine", "VAOEngine.csproj", "{E1091BD5-608B-4ED0-B2E8-C57BAD42FD36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VAOEngine", "VAOEngine.csproj", "{B2434168-5E97-4F7A-954B-4CE0B920EF61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E1091BD5-608B-4ED0-B2E8-C57BAD42FD36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E1091BD5-608B-4ED0-B2E8-C57BAD42FD36}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E1091BD5-608B-4ED0-B2E8-C57BAD42FD36}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E1091BD5-608B-4ED0-B2E8-C57BAD42FD36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2434168-5E97-4F7A-954B-4CE0B920EF61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2434168-5E97-4F7A-954B-4CE0B920EF61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2434168-5E97-4F7A-954B-4CE0B920EF61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2434168-5E97-4F7A-954B-4CE0B920EF61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {193F830D-4B6A-44E9-A354-8C0551DFD124}
+		SolutionGuid = {5E97829E-038C-4A42-8085-B61A29E637ED}
 	EndGlobalSection
 EndGlobal
