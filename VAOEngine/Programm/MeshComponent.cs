@@ -36,6 +36,10 @@ public class MeshComponent
         //Bind VAO
         GL.BindVertexArray(_VAO);
 
+        _MatrixModel._Position = new Vector3(0,0,0);
+        _MatrixModel._Scale = new Vector3(1,1,1);
+        _MatrixModel._Rotation = new Vector3(1,1,1);
+        _MatrixModel._Color = new Vector3(1,1,1);
 
         //Set matrix for model
         var _ModelMatrixF = Matrix4.Identity;

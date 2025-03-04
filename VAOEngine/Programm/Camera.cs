@@ -1,6 +1,9 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Common;
+using System.Windows.Input;
+using System.Drawing;
+using System.ComponentModel.DataAnnotations;
 
 
 public class CameraSystem
@@ -14,11 +17,11 @@ public class CameraSystem
     private int _Width, _Hegth;
     private float _YawDefult = -MathHelper.PiOver2;
     private float _PitchDefult;
-    private float _Sentensity = 0.2f;
+    public float _Sentensity = 0.2f;
     public float _Aspect { private get; set; }
     public bool _First = true;
     private float _FOVDefult = MathHelper.PiOver2;
-    private Vector2 _LastPos;
+    public Vector2 _LastPos;
 
     private Vector3 _Front => _FrontDefult;
     private Vector3 _Up => _UpDefult;
@@ -71,67 +74,33 @@ public class CameraSystem
 
 
 
-    public void InputCameraSystem(KeyboardState _Key, MouseState _Mouse, CursorState _Cursor)
+    public void InputCameraSystem()
     {
 
-
-        _Cursor = CursorState.Grabbed;
-
-
-
-        if (_Key.IsKeyDown(Keys.W))
+        if (Keyboard.IsKeyDown(Key.W))
         {
             _Position += _Front * _Speed;
         }
-        if (_Key.IsKeyDown(Keys.S))
+        if (Keyboard.IsKeyDown(Key.S))
         {
             _Position -= _Front * _Speed;
         }
-        if (_Key.IsKeyDown(Keys.A))
+        if (Keyboard.IsKeyDown(Key.A))
         { 
             _Position -= _Right * _Speed;
         }
-        if (_Key.IsKeyDown(Keys.D))
+        if (Keyboard.IsKeyDown(Key.D))
         { 
             _Position += _Right * _Speed;
         }
-        if (_Key.IsKeyDown(Keys.Space))
+        if (Keyboard.IsKeyDown(Key.Space))
         {
             _Position += _Up * _Speed;
         }
-        if (_Key.IsKeyDown(Keys.Space))
+        if (Keyboard.IsKeyDown(Key.Space))
         {
             _Position -= _Up * _Speed;
         }
-
-        if (_Mouse.IsButtonDown(MouseButton.Left))
-        {
-            if (_First)
-            {
-                _LastPos = new OpenTK.Mathematics.Vector2(_Mouse.X, _Mouse.Y);
-                _First = false;
-            }
-            else
-            {
-                float _DeltaX = _Mouse.X - _LastPos.X;
-                float _DeltaY = _Mouse.Y - _LastPos.Y;
-                _LastPos = new OpenTK.Mathematics.Vector2(_Mouse.X, _Mouse.Y);
-
-                _DeltaX *= _Sentensity;
-                _DeltaY *= _Sentensity;
-
-                _Yaw += _DeltaX;
-                _Pitch -= _DeltaY;
-            }
-        }
-        if (_Mouse.IsButtonReleased(MouseButton.Left))
-        {
-            _First = true;
-            _Cursor = CursorState.Normal;
-        }
-
-        
-
     }
 
     

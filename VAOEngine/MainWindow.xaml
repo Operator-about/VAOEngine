@@ -6,24 +6,43 @@
         xmlns:local="clr-namespace:VAOEngine"
         xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" MouseMove="Window_MouseMove">
     <Grid>
+
         <TabControl>
             <TabItem Header="GameWindow">
                 <Grid x:Name="GameGrid" Background="#FFE5E5E5">
                     <glWpfControl:GLWpfControl
                         x:Name="_Control"
                         Render="_Control_Render">
-
-                        <glWpfControl:GLWpfControl.Settings>
-                            <glWpfControl:GLWpfControlSettings MajorVersion="4"
-                                                               MinorVersion="0"/>
-                        </glWpfControl:GLWpfControl.Settings>
-
                     </glWpfControl:GLWpfControl>
+
+                    <TabControl VerticalAlignment="Bottom" Height="93" Margin="0,313,0,0">
+                        <TabItem x:Name="PanelTools" Header="TabItem">
+                            <Grid x:Name="GridTools" Background="#FFE5E5E5">
+                                <Button x:Name="ImporModel" Content="Button" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Height="45" Width="104" Click="ImportModel_Click"/>
+                            </Grid>
+
+                        </TabItem>
+                    </TabControl>
+                    <TextBlock x:Name="CameraPos" HorizontalAlignment="Left" Margin="0,10,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="20" Width="774" Foreground="White"/>
+                    <TextBlock x:Name="ModelCount" HorizontalAlignment="Left" Margin="0,30,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="20" Width="774" Foreground="White"/>
+                    <TextBlock x:Name="ShaderMainStatus" HorizontalAlignment="Left" Margin="0,50,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="20" Width="774" Foreground="White"/>
+                    <TextBlock x:Name="ModelPosition" HorizontalAlignment="Left" Margin="0,70,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="20" Width="774" Foreground="White"/>
+
                 </Grid>
             </TabItem>
         </TabControl>
+        <Border BorderThickness="1" Background="White" Margin="664,0,0,0" RenderTransformOrigin="0.5,0.5" BorderBrush="White" HorizontalAlignment="Right" Width="136">
+            <Border.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Border.RenderTransform>
+        </Border>
 
     </Grid>
 </Window>
