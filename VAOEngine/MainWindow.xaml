@@ -6,15 +6,15 @@
         xmlns:local="clr-namespace:VAOEngine"
         xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" MouseMove="Window_MouseMove">
+        Title="VAOEngine Editor" Height="450" Width="800" MouseMove="Window_MouseMove">
     <Grid>
 
         <TabControl>
             <TabItem Header="GameWindow">
                 <Grid x:Name="GameGrid" Background="#FFE5E5E5">
                     <glWpfControl:GLWpfControl
-                        x:Name="_Control"
-                        Render="_Control_Render">
+                    x:Name="_Control"
+                    Render="_Control_Render">
                     </glWpfControl:GLWpfControl>
 
                     <TabControl VerticalAlignment="Bottom" Height="93" Margin="0,313,0,0">
@@ -29,6 +29,7 @@
                     <TextBlock x:Name="ModelCount" HorizontalAlignment="Left" Margin="0,30,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="20" Width="774" Foreground="White"/>
                     <TextBlock x:Name="ShaderMainStatus" HorizontalAlignment="Left" Margin="0,50,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="20" Width="774" Foreground="White"/>
                     <TextBlock x:Name="ModelPosition" HorizontalAlignment="Left" Margin="0,70,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="20" Width="774" Foreground="White"/>
+                    <TextBlock x:Name="ModelSelect" HorizontalAlignment="Left" Margin="0,90,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="20" Width="774" Foreground="White"/>
 
                 </Grid>
             </TabItem>

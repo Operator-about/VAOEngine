@@ -6,11 +6,11 @@ using ModelLoad = Load;
 class BackgroundProcess : GameWindow
 {
 
-    public BackgroundProcess():base(GameWindowSettings.Default, new NativeWindowSettings())
+    public BackgroundProcess() : base(GameWindowSettings.Default, new NativeWindowSettings())
     {
         Size = new Vector2i(10, 10);
         Title = "BackgroundProcess don't responde";
-        
+
     }
 
     public List<ModelLoad> ImportThread(ref List<ModelLoad> _Loader)

@@ -15,11 +15,12 @@ namespace VAOEngine
 {
     public partial class MainWindow : Window
     {
-        public Shader _Shader, _ModelShader;
+        private Shader _Shader, _ModelShader;
         private BackGround _Process = new BackGround();
         private string _ModelPos;
-        public List<ModelLoad> _ModelLoader;
-        public Camera _Camera;
+        private List<ModelLoad> _ModelLoader;
+        private Camera _Camera;
+
         public MainWindow()
         {
 
@@ -33,7 +34,7 @@ namespace VAOEngine
                 MinorVersion = 0
             };
             
-
+           
             _Control.Start(_Settings);
             _Shader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragShader.glsl");
             _ModelShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragLightShader.glsl");
@@ -52,16 +53,17 @@ namespace VAOEngine
         {
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            
             _Camera.InputCameraSystem();
+            //_CurrentRay = CalculateMouseRayCoord();
+
             _ModelShader.UseShader();
 
             for (int i = 0; i < _ModelLoader.Count; i++)
             {
                 _ModelLoader[i].Draw(_ModelShader, _Camera);
                 _ModelPos = _ModelLoader[i]._OutModel._MatrixModel._Position.ToString();
-            }
-
-            
+            }            
 
             //Use main shader
             _Shader.UseShader();
@@ -104,11 +106,20 @@ namespace VAOEngine
 
         private void ImportModel_Click(object sender, RoutedEventArgs e)
         {
-            
-            
-            _Process.ImportThread(ref _ModelLoader);
-            
+            _Process.ImportThread(ref _ModelLoader);   
         }
+
+        private void _Control_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            int[] _Viewport = new int[4];
+            var _Position = Mouse.GetPosition(this);
+            if (Mouse.LeftButton == MouseButtonState.Released)
+            {
+                
+            }
+        }
+
+
 
         
     }

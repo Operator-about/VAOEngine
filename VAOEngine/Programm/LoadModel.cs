@@ -22,7 +22,7 @@ public static class Convert
 
 public class Load
 {
-    
+
     private List<MeshC> _MeshComp = new List<MeshC>();
     public MeshC _OutModel;
 
@@ -34,37 +34,37 @@ public class Load
 
     private void LoadModelFromFile(string _Path)
     {
-     
+
         AssimpContext _Import = new AssimpContext();
-        Scene _Scene = _Import.ImportFile(_Path,PostProcessSteps.Triangulate);
+        Scene _Scene = _Import.ImportFile(_Path, PostProcessSteps.Triangulate);
 
         Node(_Scene.RootNode, _Scene);
 
         _Import.Dispose();
     }
 
-   
+
     private void Node(Node _Node, Scene _Scene)
     {
-        for (int i = 0; i<_Node.MeshCount;i++)
+        for (int i = 0; i < _Node.MeshCount; i++)
         {
             Mesh _Mesh = _Scene.Meshes[_Node.MeshIndices[i]];
-            _MeshComp.Add(LoadModelInWorld(_Mesh,_Scene));
+            _MeshComp.Add(LoadModelInWorld(_Mesh, _Scene));
         }
-        for (int i = 0; i<_Node.ChildCount;i++)
+        for (int i = 0; i < _Node.ChildCount; i++)
         {
-            Node(_Node.Children[i],_Scene);
+            Node(_Node.Children[i], _Scene);
         }
     }
 
-    private MeshC LoadModelInWorld(Mesh _Mesh,Scene _Scene)
+    private MeshC LoadModelInWorld(Mesh _Mesh, Scene _Scene)
     {
 
 
         List<VertexMesh> _VertexG = new List<VertexMesh>();
         List<int> _Index = new List<int>();
 
-        for (int i = 0;i<_Mesh.VertexCount;i++)
+        for (int i = 0; i < _Mesh.VertexCount; i++)
         {
 
             VertexMesh _Vertex = new VertexMesh();
@@ -86,16 +86,16 @@ public class Load
             {
 
             }
-            
+
 
             _VertexG.Add(_Vertex);
         }
-        
+
         //Load Index
-        for (int i = 0; i<_Mesh.FaceCount;i++)
+        for (int i = 0; i < _Mesh.FaceCount; i++)
         {
             Face _Face = _Mesh.Faces[i];
-            for (int j = 0;j<_Face.IndexCount;j++)
+            for (int j = 0; j < _Face.IndexCount; j++)
             {
                 _Index.Add(_Face.Indices[j]);
             }
@@ -107,8 +107,8 @@ public class Load
 
     }
 
-    
-    
+
+
 
     //Draw model system
     public void Draw(Shader _Shader, CameraSys _Camera)
@@ -120,5 +120,5 @@ public class Load
         }
     }
 
-    
+
 }
