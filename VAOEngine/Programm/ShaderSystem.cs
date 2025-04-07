@@ -1,10 +1,12 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Audio.OpenAL;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System.IO;
 
 public class ShaderSystem
 {
     public int _Count;
+    public string _Log;
 
     public ShaderSystem(string _VertexPathShader, string _FragPathShader)
     {
@@ -22,7 +24,7 @@ public class ShaderSystem
         GL.GetShader(_VertexShader, ShaderParameter.CompileStatus, out int _Success);
         if (_Success == 0)
         {
-            string _Log = GL.GetShaderInfoLog(_VertexShader);
+            _Log = GL.GetShaderInfoLog(_VertexShader);
             Console.WriteLine(_Log);
         }
 
@@ -30,7 +32,7 @@ public class ShaderSystem
         GL.GetShader(_FragShader, ShaderParameter.CompileStatus, out int _SuccessF);
         if (_SuccessF == 0)
         {
-            string _Log = GL.GetShaderInfoLog(_FragShader);
+            _Log = GL.GetShaderInfoLog(_FragShader);
             Console.WriteLine(_Log);
         }
 
@@ -43,16 +45,19 @@ public class ShaderSystem
         GL.GetProgram(_Count, GetProgramParameterName.LinkStatus, out int _SuccessP);
         if (_SuccessP != 0)
         {
-            string _Log = GL.GetProgramInfoLog(_Count);
+            _Log = GL.GetProgramInfoLog(_Count);
             Console.WriteLine(_Log);
         }
 
     }
 
+    
+
     public void UseShader()
     {
         GL.UseProgram(_Count);    
     }
+
 
     public void SetMatrix4(string _Name, Matrix4 _Parameter)
     {
@@ -65,6 +70,12 @@ public class ShaderSystem
     {
         GL.UseProgram(_Count);
         GL.Uniform3(GL.GetUniformLocation(_Count, _Name),_Parameter);
+    }
+
+    public void SetInt(string _Name, int _Parameter)
+    {
+        GL.UseProgram(_Count);
+        GL.Uniform1(GL.GetUniformLocation(_Count, _Name), _Parameter);
     }
 
     public int GetAttrib(string _Name)

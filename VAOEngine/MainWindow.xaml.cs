@@ -5,8 +5,11 @@ using BackGround = BackgroundProcess;
 using ModelLoad = Load;
 using Shader = ShaderSystem;
 using Camera = CameraSystem;
+using SkyBox = SkyBoxComponent;
+using Light = LightComponent;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Windowing.Common;
 
 
 
@@ -15,11 +18,20 @@ namespace VAOEngine
 {
     public partial class MainWindow : Window
     {
-        private Shader _Shader, _ModelShader;
+        private Shader _Shader, _ModelShader, _SkyShader;
         private BackGround _Process = new BackGround();
         private string _ModelPos;
         private List<ModelLoad> _ModelLoader;
         private Camera _Camera;
+        private SkyBox _SkyBox;
+        private Light _LightComponent;
+        private static List<string> _SkyTexture = new List<string>() {
+        @"D:\VAOEngine\VAOEngine\SkyBoxTexture\CloudSky.jpg",
+        @"D:\VAOEngine\VAOEngine\SkyBoxTexture\CloudSky.jpg",
+        @"D:\VAOEngine\VAOEngine\SkyBoxTexture\CloudSky.jpg",
+        @"D:\VAOEngine\VAOEngine\SkyBoxTexture\CloudSky.jpg",
+        @"D:\VAOEngine\VAOEngine\SkyBoxTexture\CloudSky.jpg",
+        @"D:\VAOEngine\VAOEngine\SkyBoxTexture\CloudSky.jpg" };
 
         public MainWindow()
         {
@@ -36,14 +48,23 @@ namespace VAOEngine
             
            
             _Control.Start(_Settings);
-            _Shader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragShader.glsl");
+            _Shader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragLightShader.glsl");
+            _SkyShader = new Shader(@$".\Shader\VertSkyShader.glsl", @$".\Shader\FragSkyShader.glsl");
             _ModelShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragLightShader.glsl");
+            _LightComponent = new Light();
             GL.ClearColor(0.2f, 0.3f, 0.4f, 0.1f);
-            GL.Enable(EnableCap.DepthTest);
             _ModelLoader = new List<ModelLoad>();
+
+            
+            _SkyBox = SkyBox.LoadTexture(_SkyTexture);
+            _SkyBox.UseTexture(TextureUnit.Texture0);
+            
             _Camera = new Camera(Vector3.UnitZ * 3, (float)Width / (float)Height);
             _Process.IsVisible = false;
             _Shader.UseShader();
+
+        
+
 
         }
 
@@ -51,25 +72,44 @@ namespace VAOEngine
         
         private void _Control_Render(TimeSpan obj)
         {
-
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
             _Camera.InputCameraSystem();
-            //_CurrentRay = CalculateMouseRayCoord();
 
             _ModelShader.UseShader();
+            
 
             for (int i = 0; i < _ModelLoader.Count; i++)
             {
+                _LightComponent.DrawLight(_ModelShader, _Camera);
                 _ModelLoader[i].Draw(_ModelShader, _Camera);
                 _ModelPos = _ModelLoader[i]._OutModel._MatrixModel._Position.ToString();
-            }            
+                
+
+            }
+
+            _SkyShader.UseShader();
+            _SkyBox.Draw(_SkyShader, _Camera);
+            _SkyBox.UseTexture(TextureUnit.Texture0);
+
+
+
+            if (_Shader._Log=="")
+            {
+                Log.Text = "ExitCode:0";
+            }
+            else
+            {
+                Log.Text = _Shader._Log;
+            }
 
             //Use main shader
             _Shader.UseShader();
 
             ModelCount.Text = _ModelLoader.Count.ToString();
             ModelPosition.Text = _ModelPos;
+            
             ShaderMainStatus.Text = $"Shader status:{_Shader.ToString()}";
             CameraPos.Text = $"X:{_Camera._Position.X.ToString()}.Y:{_Camera._Position.Y.ToString()}.Z:{_Camera._Position.Z.ToString()}";
         }
@@ -109,18 +149,12 @@ namespace VAOEngine
             _Process.ImportThread(ref _ModelLoader);   
         }
 
-        private void _Control_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            int[] _Viewport = new int[4];
-            var _Position = Mouse.GetPosition(this);
-            if (Mouse.LeftButton == MouseButtonState.Released)
-            {
-                
-            }
-        }
+       
 
 
 
         
     }
 }
+
+

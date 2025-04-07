@@ -2,6 +2,8 @@
 using OpenTK.Mathematics;
 using Microsoft.Win32;
 using ModelLoad = Load;
+using OpenTK.Windowing.Common;
+using OpenTK.Graphics.OpenGL4;
 
 class BackgroundProcess : GameWindow
 {

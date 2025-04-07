@@ -11,10 +11,8 @@ class LightComponent
 
     public void AddPointLight()
     {
-        Console.WriteLine("Input color(only in type Int32):");
-        _LightColor = new Vector3(Int32.Parse(Console.ReadLine()!), Int32.Parse(Console.ReadLine()!), Int32.Parse(Console.ReadLine()!));
-        Console.WriteLine("Input light position(only in type Int32):");
-        _LightPosition = new Vector3(Int32.Parse(Console.ReadLine()!), Int32.Parse(Console.ReadLine()!), Int32.Parse(Console.ReadLine()!));
+        _LightColor = new Vector3(1,1,1);
+        _LightPosition = new Vector3(10,10,10);
     }
     public void DrawLight(Shader _Shader, Camera _Camera)
     {

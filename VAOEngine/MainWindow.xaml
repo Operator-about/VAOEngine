@@ -33,6 +33,9 @@
 
                 </Grid>
             </TabItem>
+            <TabItem Header="Log">
+                <TextBlock x:Name="Log" Text="Shader"/>
+            </TabItem>
         </TabControl>
         <Border BorderThickness="1" Background="White" Margin="664,0,0,0" RenderTransformOrigin="0.5,0.5" BorderBrush="White" HorizontalAlignment="Right" Width="136">
             <Border.RenderTransform>
