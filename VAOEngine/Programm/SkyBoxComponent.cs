@@ -144,6 +144,8 @@ public class SkyBoxComponent
 
             using (Stream _FileTexture = File.OpenRead(_SkyTexture[i]))
             {
+                StbImage.stbi_set_flip_vertically_on_load(1);
+
                 ImageResult _Texture = ImageResult.FromStream(_FileTexture, ColorComponents.RedGreenBlue);
 
                 GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX+i, 0, PixelInternalFormat.Rgb, _Texture.Width, _Texture.Height,
