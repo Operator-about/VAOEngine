@@ -11,10 +11,9 @@ public class CameraSystem
     private float _Speed = 0.05f;
     public Vector3 _Position { get; set; }
     public Vector3 _UpDefult = Vector3.UnitY;
-    public Vector3 _FrontDefult = Vector3.UnitZ;
+    public Vector3 _FrontDefult = -Vector3.UnitZ;
     public Vector3 _RightDefult = Vector3.UnitX;
 
-    private int _Width, _Hegth;
     private float _YawDefult = -MathHelper.PiOver2;
     private float _PitchDefult;
     public float _Sentensity = 0.2f;
@@ -122,9 +121,9 @@ public class CameraSystem
         _FrontDefult.Y = MathF.Sin(_PitchDefult);
         _FrontDefult.X = MathF.Cos(_PitchDefult) * MathF.Sin(_YawDefult);
 
-        _FrontDefult = OpenTK.Mathematics.Vector3.Normalize(_FrontDefult);
+        _FrontDefult = Vector3.Normalize(_FrontDefult);
 
-        _RightDefult = OpenTK.Mathematics.Vector3.Normalize(OpenTK.Mathematics.Vector3.Cross(_FrontDefult, OpenTK.Mathematics.Vector3.UnitY));
-        _UpDefult = OpenTK.Mathematics.Vector3.Normalize(OpenTK.Mathematics.Vector3.Cross(_RightDefult, _FrontDefult));
+        _RightDefult = Vector3.Normalize(Vector3.Cross(_FrontDefult, Vector3.UnitY));
+        _UpDefult = Vector3.Normalize(Vector3.Cross(_RightDefult, _FrontDefult));
     }
 }

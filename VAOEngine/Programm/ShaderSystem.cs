@@ -49,6 +49,7 @@ public class ShaderSystem
             Console.WriteLine(_Log);
         }
 
+        _Log = GL.GetError().ToString();
     }
 
     
