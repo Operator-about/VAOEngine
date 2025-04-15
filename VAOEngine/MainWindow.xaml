@@ -15,7 +15,8 @@
                 <Grid x:Name="GameGrid" Background="#FFE5E5E5">
                     <glWpfControl:GLWpfControl
                     x:Name="_Control"
-                    Render="_Control_Render">
+                    Render="_Control_Render"
+                    MouseMove="_Control_MouseMove">
                     </glWpfControl:GLWpfControl>
 
 
@@ -46,6 +47,7 @@
                 <Grid x:Name="GridTools" Background="#FFE5E5E5">
                     <Button x:Name="ImporModel" Content="Add model(.fbx)" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="22" Width="104" Click="ImportModel_Click" />
                     <Button x:Name="SkyBoxAdd" Content="Add skybox" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Height="24" Width="104" Click="SkyBoxAdd_Click"/>
+                    <Button x:Name="LightAdd" Content="Add light" HorizontalAlignment="Left" Margin="119,10,0,0" VerticalAlignment="Top" Height="24" Width="104" Click="LightAdd_Click"/>
 
                 </Grid>
 

@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using OpenTK;
 using OpenTK.Wpf;
 using BackGround = BackgroundProcess;
 using ModelLoad = Load;
@@ -21,21 +20,20 @@ namespace VAOEngine
     public partial class MainWindow : Window
     {
         private static string _LLog;
-        private Shader _Shader, _ModelShader, _SkyShader, _LightShader;
+        private Shader _Shader, _ModelShader, _SkyShader, _LightShader, _ShadowShader;
         private BackGround _Process = new BackGround();
         private string _ModelPos;
         private List<ModelLoad> _ModelLoader;
+        private List<Light> _LightLoader;
         private Camera _Camera;
         private SkyBox _SkyBox;
-        private Light _LightComponent;
-        private static DebugProc _Debug = OnDebugMessage;
         private static List<string> _SkyTexture = new List<string>() {
-        @".\SkyBoxTexture\CloudSky.jpg",
-        @".\SkyBoxTexture\CloudSky.jpg",
-        @".\SkyBoxTexture\CloudSky.jpg",
-        @".\SkyBoxTexture\CloudSky.jpg",
-        @".\SkyBoxTexture\CloudSky.jpg",
-        @".\SkyBoxTexture\CloudSky.jpg" };
+        @".\SkyBoxTexture\SunSky.jpg",
+        @".\SkyBoxTexture\SunSky.jpg",
+        @".\SkyBoxTexture\SunSky.jpg",
+        @".\SkyBoxTexture\SunSky.jpg",
+        @".\SkyBoxTexture\SunSky.jpg",
+        @".\SkyBoxTexture\SunSky.jpg" };
 
         public MainWindow()
         {
@@ -51,61 +49,79 @@ namespace VAOEngine
                 ContextFlags = OpenTK.Windowing.Common.ContextFlags.Debug
 
             };
-            
-           
+
+
             _Control.Start(_Settings);
-            _Shader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragShader.glsl");
-            _SkyShader = new Shader(@$".\Shader\VertSkyShader.glsl", @$".\Shader\FragSkyShader.glsl");
-            _ModelShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragShader.glsl");
-            _LightShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragLightShader.glsl");
-            _LightComponent = new Light();
+            GL.Enable(EnableCap.DepthTest);
+            
+            
+            _Shader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragLightShader.glsl");
+            _SkyShader = new Shader(@$".\Shader\SkyBoxShader\VertSkyShader.glsl", @$".\Shader\SkyBoxShader\FragSkyShader.glsl");
+            _ModelShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\ShaderForModel\FragShader.glsl");
+            _LightShader = new Shader(@$".\Shader\TextureShaderLight\VertTextureLightShader.glsl", @$".\Shader\TextureShaderLight\FragTextureLightShader.glsl");
+            _ShadowShader = new Shader(@$".\Shader\ShadowShader\VertShadowShader.glsl", @$".\Shader\ShadowShader\FragShadowShader.glsl");
+
             GL.ClearColor(0.2f, 0.3f, 0.4f, 0.1f);
             _ModelLoader = new List<ModelLoad>();
+            _LightLoader = new List<Light>();
 
-            _SkyBox = SkyBox.LoadTexture(_SkyTexture);
+
+
+            _ModelShader.UseShader();
             _SkyShader.UseShader();
-            _SkyShader.SetInt("skybox", 0);
 
 
-
+            
             _Camera = new Camera(Vector3.UnitZ * 3, (float)Width / (float)Height);
             _Process.IsVisible = false;
             _Shader.UseShader();
 
-            
+
 
 
 
         }
 
-        
-        
+
+
         private void _Control_Render(TimeSpan obj)
         {
-            
+            GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.DepthTest);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
 
             _Camera.InputCameraSystem();
 
             _ModelShader.UseShader();
 
-            _SkyBox.Draw(_SkyShader, _Camera);
-
+            
+            if (_SkyBox!=null)
+            {
+                _SkyBox.Draw(_SkyShader, _Camera);
+                ConsoleMessage.Items.Add($"SkyBox status:{_SkyBox._Log}");
+            }
             for (int i = 0; i < _ModelLoader.Count; i++)
             {
-                _LightComponent.DrawLight(_LightShader, _Camera);
+                
                 _ModelLoader[i].Draw(_ModelShader, _Camera);
+             
                 _ModelPos = _ModelLoader[i]._OutModel._MatrixModel._Position.ToString();
+
+
             }
-
+            if(_LightLoader!=null)
+            {
+                for (int i = 0; i < _LightLoader.Count; i++)
+                {
+                    _LightLoader[i].DrawLight(_ModelShader, _LightShader, _Camera);
+                }
+            }
             
-
-            ConsoleMessage.Items.Add($"SkyBox status:{_SkyBox._Log}");
             ConsoleMessage.Items.Add($"Main status:{GL.GetError().ToString()}");
             ConsoleMessage.Items.Add($"Shader status:{_Shader._Log}");
             ConsoleMessage.Items.Add($"SkyBox shader status:{_SkyShader._Log}");
-
-
+            ConsoleMessage.Items.Add($"Light shader status:{_LightShader._Log}");
 
 
             Log.Text = _LLog;
@@ -114,15 +130,36 @@ namespace VAOEngine
 
             ModelCount.Text = _ModelLoader.Count.ToString();
             ModelPosition.Text = _ModelPos;
-            
+
             ShaderMainStatus.Text = $"Shader status:{_Shader.ToString()}";
             CameraPos.Text = $"X:{_Camera._Position.X.ToString()}.Y:{_Camera._Position.Y.ToString()}.Z:{_Camera._Position.Z.ToString()}";
+
+            if (Mouse.LeftButton==MouseButtonState.Released)
+            {
+                //var _Position = Mouse.GetPosition(this);
+                
+            }
+
+            
         }
 
         private void SkyBoxAdd_Click(object sender, RoutedEventArgs e)
         {
+            _Process.AddSkyBox(ref _SkyBox, _SkyTexture);
+        }
+
+        private void LightAdd_Click(object sender, RoutedEventArgs e)
+        {
+            _Process.AddLight(ref _LightLoader);
+        }
+
+        private void _Control_MouseMove(object sender, MouseEventArgs e)
+        {
+            var _Position = Mouse.GetPosition(this);
+
+          
+
             
-            _SkyBox.UseTexture(TextureUnit.Texture0);
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e)
@@ -149,18 +186,19 @@ namespace VAOEngine
             if (Mouse.RightButton == MouseButtonState.Released)
             {
                 _Camera._First = true;
+                
             }
         }
 
         private void ImportModel_Click(object sender, RoutedEventArgs e)
         {
-            
-            _Process.ImportThread(ref _ModelLoader);   
+
+            _Process.ImportThread(ref _ModelLoader);
         }
 
         private static void OnDebugMessage(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr pMessage, IntPtr pUserParam)
         {
-            
+
             string message = Marshal.PtrToStringAnsi(pMessage, length);
 
             Debug.WriteLine("[{0} source={1} type={2} id={3}] {4}. " + severity + ". " + source + ". " + type + ". " + id + ". " + message);
@@ -171,15 +209,6 @@ namespace VAOEngine
                 throw new Exception(message);
             }
         }
-
-
-
-
-
-
-
-
     }
 }
-
 

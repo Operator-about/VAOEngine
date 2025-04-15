@@ -49,7 +49,7 @@ public class ShaderSystem
             Console.WriteLine(_Log);
         }
 
-        _Log = GL.GetError().ToString();
+        
     }
 
     
@@ -77,6 +77,12 @@ public class ShaderSystem
     {
         GL.UseProgram(_Count);
         GL.Uniform1(GL.GetUniformLocation(_Count, _Name), _Parameter);
+    }
+
+    public void SetFloat(string _Name, float _Parameter)
+    {
+        GL.UseProgram(_Count);
+        GL.Uniform1(GL.GetUniformLocation(_Count,_Name), _Parameter);
     }
 
     public int GetAttrib(string _Name)

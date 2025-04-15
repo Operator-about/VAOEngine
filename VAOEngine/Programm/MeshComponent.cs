@@ -4,6 +4,7 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Net;
 
 
 
@@ -24,25 +25,28 @@ public struct VertexMesh
 }
 
 
-public class MeshComponent 
+public class MeshComponent
 {
 
     private readonly int _VAO;
     private readonly int _IndexG;
     public MeshPosScaleRot _MatrixModel;
+    public Matrix4 _ModelMatrixF;
 
     public void DrawMesh(Shader _Shader, Camera _Camera)
     {
         //Bind VAO
         GL.BindVertexArray(_VAO);
-
-        _MatrixModel._Position = new Vector3(0,0,0);
-        _MatrixModel._Scale = new Vector3(1,1,1);
-        _MatrixModel._Rotation = new Vector3(1,1,1);
-        _MatrixModel._Color = new Vector3(1,1,1);
+        
+        GL.Enable(EnableCap.CullFace);
+        GL.Enable(EnableCap.Multisample);
+        _MatrixModel._Position = new Vector3(0, 0, 0);
+        _MatrixModel._Scale = new Vector3(1, 1, 1);
+        _MatrixModel._Rotation = new Vector3(1, 1, 1);
+        _MatrixModel._Color = new Vector3(1, 1, 1);
 
         //Set matrix for model
-        var _ModelMatrixF = Matrix4.Identity;
+        _ModelMatrixF = Matrix4.Identity;
         var _PositionModelF = Matrix4.CreateTranslation(_MatrixModel._Position);
         var _ScaleMatrixModelF = Matrix4.CreateScale(_MatrixModel._Scale);
         var _MatrixX = Matrix4.CreateRotationX(_MatrixModel._Rotation.X);
@@ -57,15 +61,16 @@ public class MeshComponent
         _Shader.SetMatrix4("view", _Camera.GetView());
         _Shader.SetMatrix4("proj", _Camera.GetProjection());
         _Shader.SetVector3("objColor", _MatrixModel._Color);
-        
+
 
         //Draw
         GL.DrawElements(PrimitiveType.Triangles, _IndexG, DrawElementsType.UnsignedInt, 0);
-        GL.BindVertexArray(0);     
+        GL.BindVertexArray(0);
     }
 
     public MeshComponent(Span<VertexMesh> _Vertex, Span<int> _Index)
     {
+        
         //this._TextureList = _Tex;   
         _IndexG = _Index.Length;
 
@@ -78,12 +83,12 @@ public class MeshComponent
         GL.BindVertexArray(_VAO);
 
 
-
-        //Report data in buffer
+        //Report data in buffer VBO
         Console.WriteLine("Report data in buffer: Vertex");
         GL.BindBuffer(BufferTarget.ArrayBuffer, _VBO);
         GL.BufferData(BufferTarget.ArrayBuffer, _Vertex.Length * Unsafe.SizeOf<VertexMesh>(), ref MemoryMarshal.GetReference(_Vertex), BufferUsageHint.StaticDraw);
 
+        //Report data in buffer EBO
         Console.WriteLine("Report data in buffer: Index");
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _EBO);
         GL.BufferData(BufferTarget.ElementArrayBuffer, _Index.Length * sizeof(int), ref MemoryMarshal.GetReference(_Index), BufferUsageHint.StaticDraw);
@@ -107,6 +112,5 @@ public class MeshComponent
         GL.BindVertexArray(0);
     }
 }
-
 
 

@@ -2,8 +2,8 @@
 using OpenTK.Mathematics;
 using Microsoft.Win32;
 using ModelLoad = Load;
-using OpenTK.Windowing.Common;
-using OpenTK.Graphics.OpenGL4;
+using Light = LightComponent;
+using SkyBox = SkyBoxComponent;
 
 class BackgroundProcess : GameWindow
 {
@@ -23,5 +23,18 @@ class BackgroundProcess : GameWindow
             _Loader.Add(new ModelLoad(_File.FileName));
         }
         return _Loader;
+    }
+
+    public List<Light> AddLight(ref List<Light> _Lighter)
+    {
+        _Lighter.Add(new Light(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(10.0f, 10.0f, 10.0f)));
+
+        return _Lighter;
+    }
+
+    public SkyBox AddSkyBox(ref SkyBox _SkyBox, List<string> _TextureSky)
+    {
+        _SkyBox = SkyBox.LoadTexture(_TextureSky);
+        return _SkyBox;
     }
 }

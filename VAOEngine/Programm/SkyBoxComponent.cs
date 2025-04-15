@@ -4,12 +4,9 @@ using Shader = ShaderSystem;
 using Camera = CameraSystem;
 using OpenTK.Mathematics;
 using System.IO;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 public class SkyBoxComponent
 {
-    private static DebugProc _Debug = OnDebugMessage;
     public string _Log;
     private int _VAO;
     private int[] _Index = new int[]
@@ -98,7 +95,6 @@ public class SkyBoxComponent
 
         UseTexture(TextureUnit.Texture0);
 
-
         GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
         
 
@@ -135,7 +131,11 @@ public class SkyBoxComponent
         GL.ActiveTexture(TextureUnit.Texture0);
         GL.BindTexture(TextureTarget.TextureCubeMap, _LCount);
 
-
+        GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+        GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+        GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+        GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+        GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR, (int)TextureWrapMode.ClampToEdge);
 
 
         for (int i = 0; i < _SkyTexture.Count; i++)
@@ -151,23 +151,17 @@ public class SkyBoxComponent
                 GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX+i, 0, PixelInternalFormat.Rgb, _Texture.Width, _Texture.Height,
                 0, PixelFormat.Rgb, PixelType.UnsignedByte, _Texture.Data);
 
-                GL.DebugMessageCallback(_Debug, IntPtr.Zero);
-                GL.Enable(EnableCap.DebugOutput);
-                GL.Enable(EnableCap.DebugOutputSynchronous);
-
+                
+                
             }
             
 
 
         }
 
-        GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-        GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-        GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
-        GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-        GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR, (int)TextureWrapMode.ClampToEdge);
-
+        GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
+        GL.BindTexture(TextureTarget.TextureCubeMap, 0);
         return new SkyBoxComponent(_LCount);
 
     }
@@ -185,19 +179,7 @@ public class SkyBoxComponent
         GL.BindTexture(TextureTarget.TextureCubeMap, _Count);
     }
 
-    private static void OnDebugMessage(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr pMessage, IntPtr pUserParam)
-    {
-
-        string message = Marshal.PtrToStringAnsi(pMessage, length);
-
-        Debug.WriteLine("[{0} source={1} type={2} id={3}] {4}. " + severity + ". " + source + ". " + type + ". " + id + ". " + message);
-        //_LLog = "[{0} source={1} type={2} id={3}] {4}. " + severity + ". " + source + ". " + type + ". " + id + ". " + message;
-
-        if (type == DebugType.DebugTypeError)
-        {
-            throw new Exception(message);
-        }
-    }
+    
 
 
 }
