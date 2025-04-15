@@ -9,6 +9,9 @@ uniform vec3 lightView;
 
 in vec3 Normal;
 in vec3 CurrentPos;
+in vec4 fragpos;
+
+uniform sampler2D shadowmap;
 
 void main()
 {
@@ -29,7 +32,10 @@ void main()
 	float Spec = pow(max(dot(ViewDirection, ReflectDirection),0.0f),32.0f);
 	vec3 Specular = SpecularS * Spec * lightColor;
 
-	vec3 Resultation = (Ambient+Diffuse+Specular)*objColor;
+	
+
+	
+	vec3 Resultation = (Diffuse+Ambient+Specular)*objColor;
 	FragColor = vec4(Resultation,1.0f);
 
 }

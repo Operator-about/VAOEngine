@@ -34,23 +34,8 @@ void main()
 
 	
 
-	float shadow = 0.0f;
-	vec3 lightcoords = fragpos.xyz / fragpos.w;
-	if(lightcoords.z<=1.0f)
-	{
-
-		lightcoords = (lightcoords+1.0f)/2.0f;
-
-		float closetDepth = texture(shadowmap,lightcoords.xy).r;
-		float currentDepth = lightcoords.z;
-
-		if(currentDepth>closetDepth)
-		{
-			shaddow=1.0f;
-		}
-
-	}
-	vec3 Resultation = (Diffuse*(1.0f-shadow)+Ambient+Specular*(1.0f-shadow))*objColor;
+	
+	vec3 Resultation = (Diffuse+Ambient+Specular)*objColor;
 	FragColor = vec4(Resultation,1.0f);
 
 }
