@@ -156,10 +156,6 @@ namespace VAOEngine
         private void _Control_MouseMove(object sender, MouseEventArgs e)
         {
             var _Position = Mouse.GetPosition(this);
-
-          
-
-            
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e)
