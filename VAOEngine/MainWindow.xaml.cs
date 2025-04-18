@@ -7,10 +7,9 @@ using Shader = ShaderSystem;
 using Camera = CameraSystem;
 using SkyBox = SkyBoxComponent;
 using Light = LightComponent;
+using Debug = DebugComponent;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 
 
 
@@ -20,13 +19,15 @@ namespace VAOEngine
     public partial class MainWindow : Window
     {
         private static string _LLog;
-        private Shader _Shader, _ModelShader, _SkyShader, _LightShader, _ShadowShader;
+        private Shader _ModelShader, _SkyShader, _LightShader, _ShadowShader;
         private BackGround _Process = new BackGround();
         private string _ModelPos;
         private List<ModelLoad> _ModelLoader;
         private List<Light> _LightLoader;
         private Camera _Camera;
+        private Debug _Debug;
         private SkyBox _SkyBox;
+        private Matrix4 _OrthogProj, _LightView, _LightProj;
         private static List<string> _SkyTexture = new List<string>() {
         @".\SkyBoxTexture\SunSky.jpg",
         @".\SkyBoxTexture\SunSky.jpg",
@@ -55,26 +56,29 @@ namespace VAOEngine
             GL.Enable(EnableCap.DepthTest);
             
             
-            _Shader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\FragLightShader.glsl");
+            
             _SkyShader = new Shader(@$".\Shader\SkyBoxShader\VertSkyShader.glsl", @$".\Shader\SkyBoxShader\FragSkyShader.glsl");
             _ModelShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\ShaderForModel\FragShader.glsl");
             _LightShader = new Shader(@$".\Shader\TextureShaderLight\VertTextureLightShader.glsl", @$".\Shader\TextureShaderLight\FragTextureLightShader.glsl");
-            
+            _ShadowShader = new Shader(@$".\Shader\ShadowShader\VertShadowShader.glsl", @$".\Shader\ShadowShader\FragShadowShader.glsl");
+
 
             GL.ClearColor(0.2f, 0.3f, 0.4f, 0.1f);
             _ModelLoader = new List<ModelLoad>();
             _LightLoader = new List<Light>();
-
-
+            _Debug = new Debug();
+            
+            
 
             _ModelShader.UseShader();
             _SkyShader.UseShader();
+            _ShadowShader.UseShader();
 
 
             
             _Camera = new Camera(Vector3.UnitZ * 3, (float)Width / (float)Height);
             _Process.IsVisible = false;
-            _Shader.UseShader();
+           
 
 
 
@@ -89,13 +93,18 @@ namespace VAOEngine
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.DepthTest);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
+            //GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
+            GL.Enable(EnableCap.DebugOutput);
+            GL.Enable(EnableCap.DebugOutputSynchronous);
 
             _Camera.InputCameraSystem();
 
             _ModelShader.UseShader();
+            _ShadowShader.UseShader();
 
-            
+
+            int _ModelCount = 0;
+
             if (_SkyBox!=null)
             {
                 _SkyBox.Draw(_SkyShader, _Camera);
@@ -103,9 +112,8 @@ namespace VAOEngine
             }
             for (int i = 0; i < _ModelLoader.Count; i++)
             {
-                
-                _ModelLoader[i].Draw(_ModelShader, _Camera);
-             
+                _ModelCount = i;
+                _ModelLoader[i].Draw(_ModelShader, _Camera, _LightProj);
                 _ModelPos = _ModelLoader[i]._OutModel._MatrixModel._Position.ToString();
 
 
@@ -115,23 +123,32 @@ namespace VAOEngine
                 for (int i = 0; i < _LightLoader.Count; i++)
                 {
                     _LightLoader[i].DrawLight(_ModelShader, _LightShader, _Camera);
+                    _OrthogProj = Matrix4.CreateOrthographicOffCenter(-35.0f, 35.0f, -35.0f, 35.0f, 0.1f, 75.0f);
+                    _LightView = Matrix4.LookAt(20.0f * _LightLoader[i]._LightPosition, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 1.0f, 0.0f));
+                    _LightProj = _OrthogProj * _LightView;
+                    if (_ModelLoader.Count>0)
+                    {
+                        _ModelLoader[_ModelCount].DrawShadow(_ModelShader, _ShadowShader, _Camera, _LightProj);
+                    }
+                    
+                    
                 }
             }
             
             ConsoleMessage.Items.Add($"Main status:{GL.GetError().ToString()}");
-            ConsoleMessage.Items.Add($"Shader status:{_Shader._Log}");
+            ConsoleMessage.Items.Add($"Model shader status:{_ModelShader._Log}");
             ConsoleMessage.Items.Add($"SkyBox shader status:{_SkyShader._Log}");
             ConsoleMessage.Items.Add($"Light shader status:{_LightShader._Log}");
-
+            ConsoleMessage.Items.Add($"Shadow shader status:{_ShadowShader._Log}");
+            ConsoleMessage.Items.Add($"Viewport scale: W: {Width}, H: {Height}");
 
             Log.Text = _LLog;
             //Use main shader
-            _Shader.UseShader();
 
-            ModelCount.Text = _ModelLoader.Count.ToString();
+
+            //ModelCount.Text = _ModelLoader.Count.ToString();
             ModelPosition.Text = _ModelPos;
 
-            ShaderMainStatus.Text = $"Shader status:{_Shader.ToString()}";
             CameraPos.Text = $"X:{_Camera._Position.X.ToString()}.Y:{_Camera._Position.Y.ToString()}.Z:{_Camera._Position.Z.ToString()}";
 
             if (Mouse.LeftButton==MouseButtonState.Released)
@@ -192,19 +209,7 @@ namespace VAOEngine
             _Process.ImportThread(ref _ModelLoader);
         }
 
-        private static void OnDebugMessage(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr pMessage, IntPtr pUserParam)
-        {
-
-            string message = Marshal.PtrToStringAnsi(pMessage, length);
-
-            Debug.WriteLine("[{0} source={1} type={2} id={3}] {4}. " + severity + ". " + source + ". " + type + ". " + id + ". " + message);
-            //_LLog = "[{0} source={1} type={2} id={3}] {4}. " + severity + ". " + source + ". " + type + ". " + id + ". " + message;
-
-            if (type == DebugType.DebugTypeError)
-            {
-                throw new Exception(message);
-            }
-        }
+        
     }
 }
 

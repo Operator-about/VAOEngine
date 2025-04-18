@@ -4,6 +4,7 @@ using Shader = ShaderSystem;
 using MeshC = MeshComponent;
 using CameraSys = CameraSystem;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 
 public static class Convert
@@ -81,10 +82,12 @@ public class Load
                 _Vec.X = _Mesh.TextureCoordinateChannels[0][i].X;
                 _Vec.Y = _Mesh.TextureCoordinateChannels[0][i].Y;
                 _Vertex._TexCoord = _Vec;
+                Debug.WriteLine("Model have texcoord!");
             }
             else
             {
-
+                _Vertex._TexCoord = new Vector2(0.0f,0.0f);
+                Debug.WriteLine("No texcoord in model!");
             }
 
 
@@ -102,7 +105,7 @@ public class Load
         }
 
 
-        Console.WriteLine($"Count value:{_MeshComp.Count}");
+        
         return new MeshC(_VertexG.ToArray(), _Index.ToArray());
 
     }
@@ -110,13 +113,21 @@ public class Load
 
 
 
-    //Draw model system
-    public void Draw(Shader _Shader, CameraSys _Camera)
+    //Draw's model system
+    public void Draw(Shader _Shader, CameraSys _Camera, Matrix4 _LightProj)
     {
         foreach (MeshC _Mesh in _MeshComp)
         {
             _OutModel = _Mesh;
-            _OutModel.DrawMesh(_Shader, _Camera);
+            _OutModel.DrawMesh(_Shader, _Camera, _LightProj);
+        }
+    }
+
+    public void DrawShadow(Shader _ModelShader,Shader _ShadowShader, CameraSys _Camera,Matrix4 _LightProj)
+    {
+        foreach (MeshC _Shadow in _MeshComp)
+        {
+            _Shadow.DrawShadow(_ModelShader, _ShadowShader, _Camera, _LightProj);
         }
     }
 
