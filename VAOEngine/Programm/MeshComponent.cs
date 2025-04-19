@@ -67,11 +67,14 @@ public class MeshComponent
         _Shader.SetMatrix4("model", _ModelMatrixF);
         _Shader.SetMatrix4("view", _Camera.GetView());
         _Shader.SetMatrix4("proj", _Camera.GetProjection());
-        _Shader.SetVector3("objColor", _MatrixModel._Color);
-        _Shader.SetMatrix4("lightproj", _LightProj);
-        GL.ActiveTexture(TextureUnit.Texture0 + 2);
-        GL.BindTexture(TextureTarget.Texture2D, _ShadowCount);
-        _Shader.SetInt("shadowmap", 2);
+        _Shader.SetVector3("_Material.ModelColor", _MatrixModel._Color);
+        _Shader.SetVector3("_Material.Ambient", new Vector3(0.0f, 0.1f, 0.06f));
+        _Shader.SetVector3("_Material.Diffuse", new Vector3(0.0f, 0.50980392f, 0.50980392f));
+        _Shader.SetVector3("_Material.Specular", new Vector3(0.50196078f, 0.50196078f, 0.50196078f));
+        _Shader.SetFloat("_Material.Shininess", 32.0f);
+        //GL.ActiveTexture(TextureUnit.Texture0 + 2);
+        //GL.BindTexture(TextureTarget.Texture2D, _ShadowCount);
+
 
         //Draw
         GL.DrawElements(PrimitiveType.Triangles, _IndexG, DrawElementsType.UnsignedInt, 0);

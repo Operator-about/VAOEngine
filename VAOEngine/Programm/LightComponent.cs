@@ -55,9 +55,12 @@ public class LightComponent
         _TextureShader.SetInt("texture0",0);
 
         //Shader for light
-        _Shader.SetVector3("lightColor",_LightColor);
-        _Shader.SetVector3("lightPosition",_LightPosition);
-        _Shader.SetVector3("lightView",_Camera._Position);
+        _Shader.SetVector3("_Light.LightColor",_LightColor);
+        _Shader.SetVector3("_Light.Position",_LightPosition);
+        _Shader.SetVector3("_Light.Ambient", new Vector3(1.0f, 1.0f, 1.0f));
+        _Shader.SetVector3("_Light.Diffuse", new Vector3(1.0f, 1.0f, 1.0f));
+        _Shader.SetVector3("_Light.Specular", new Vector3(1.0f, 1.0f, 1.0f));
+        _Shader.SetVector3("_ViewPosition",_Camera._Position);
 
 
 
