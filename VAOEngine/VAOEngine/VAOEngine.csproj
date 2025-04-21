@@ -9,10 +9,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="AddObjectIcon.png" />
+    <None Remove="VAOEngineIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AssimpNet" Version="4.1.0" />
     <PackageReference Include="OpenTK" Version="4.8.2" />
     <PackageReference Include="OpenTK.GLWpfControl" Version="4.3.3" />
     <PackageReference Include="StbImageSharp" Version="2.30.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="AddObjectIcon.png" />
+    <Resource Include="VAOEngineIcon.png" />
   </ItemGroup>
 
 </Project>

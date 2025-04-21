@@ -38,7 +38,7 @@ namespace VAOEngine
 
         public MainWindow()
         {
-
+            
             InitializeComponent();
 
 
@@ -55,8 +55,8 @@ namespace VAOEngine
             _Control.Start(_Settings);
             GL.Enable(EnableCap.DepthTest);
             
-            
-            
+
+
             _SkyShader = new Shader(@$".\Shader\SkyBoxShader\VertSkyShader.glsl", @$".\Shader\SkyBoxShader\FragSkyShader.glsl");
             _ModelShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\ShaderForModel\FragShader.glsl");
             _LightShader = new Shader(@$".\Shader\TextureShaderLight\VertTextureLightShader.glsl", @$".\Shader\TextureShaderLight\FragTextureLightShader.glsl");
@@ -67,16 +67,16 @@ namespace VAOEngine
             _ModelLoader = new List<ModelLoad>();
             _LightLoader = new List<Light>();
             _Debug = new Debug();
-            
-            
 
+
+            _ShadowShader.UseShader();
             _ModelShader.UseShader();
             _SkyShader.UseShader();
-            _ShadowShader.UseShader();
+            
 
 
             
-            _Camera = new Camera(Vector3.UnitZ * 3, (float)Width / (float)Height);
+            _Camera = new Camera(Vector3.UnitZ * 1, (float)Width / (float)Height);
             _Process.IsVisible = false;
            
 
@@ -100,22 +100,15 @@ namespace VAOEngine
             _Camera.InputCameraSystem();
 
             _ModelShader.UseShader();
-            _ShadowShader.UseShader();
+            
 
-
-            int _ModelCount = 0;
-
-            if (_SkyBox!=null)
-            {
-                _SkyBox.Draw(_SkyShader, _Camera);
-                ConsoleMessage.Items.Add($"SkyBox status:{_SkyBox._Log}");
-            }
+            
             for (int i = 0; i < _ModelLoader.Count; i++)
             {
-                _ModelCount = i;
-                _ModelLoader[i].Draw(_ModelShader, _Camera, _LightProj);
+   
+                _ModelLoader[i].Draw(_ModelShader, _Camera);
                 _ModelPos = _ModelLoader[i]._OutModel._MatrixModel._Position.ToString();
-
+                _ModelLoader[i].DrawShadow(_ModelShader, _ShadowShader, _Camera, _LightProj);
 
             }
             if(_LightLoader!=null)
@@ -125,25 +118,21 @@ namespace VAOEngine
                     _LightLoader[i].DrawLight(_ModelShader, _LightShader, _Camera);
                     _OrthogProj = Matrix4.CreateOrthographicOffCenter(-35.0f, 35.0f, -35.0f, 35.0f, 0.1f, 75.0f);
                     _LightView = Matrix4.LookAt(20.0f * _LightLoader[i]._LightPosition, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 1.0f, 0.0f));
-                    _LightProj = _OrthogProj * _LightView;
-                    if (_ModelLoader.Count>0)
-                    {
-                        _ModelLoader[_ModelCount].DrawShadow(_ModelShader, _ShadowShader, _Camera, _LightProj);
-                    }
-                    
-                    
+                    _LightProj = _OrthogProj * _LightView;                  
                 }
             }
-            
+            if (_SkyBox != null)
+            {
+                _SkyBox.Draw(_SkyShader, _Camera);
+                ConsoleMessage.Items.Add($"SkyBox status:{_SkyBox._Log}");
+            }
+
             ConsoleMessage.Items.Add($"Main status:{GL.GetError().ToString()}");
             ConsoleMessage.Items.Add($"Model shader status:{_ModelShader._Log}");
             ConsoleMessage.Items.Add($"SkyBox shader status:{_SkyShader._Log}");
             ConsoleMessage.Items.Add($"Light shader status:{_LightShader._Log}");
             ConsoleMessage.Items.Add($"Shadow shader status:{_ShadowShader._Log}");
             ConsoleMessage.Items.Add($"Viewport scale: W: {Width}, H: {Height}");
-
-            Log.Text = _LLog;
-            //Use main shader
 
 
             //ModelCount.Text = _ModelLoader.Count.ToString();

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:VAOEngine"
         xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
         mc:Ignorable="d"
-        Title="VAOEngine Editor" Height="450" Width="800" MouseMove="Window_MouseMove">
+        Title="VAOEngine Editor" Height="450" Width="800" MouseMove="Window_MouseMove" Icon="/VAOEngineIcon.png">
     <Grid>
 
 
@@ -29,7 +29,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Log">
-                <TextBlock x:Name="Log" Text="Shader"/>
+                <ListBox x:Name="ConsoleMessage" d:ItemsSource="{d:SampleData ItemCount=5}" HorizontalAlignment="Left" Width="794"/>
             </TabItem>
         </TabControl>
         <Border BorderThickness="1" Background="White" Margin="664,0,0,0" RenderTransformOrigin="0.5,0.5" BorderBrush="White" HorizontalAlignment="Right" Width="136">
@@ -48,6 +48,11 @@
                     <Button x:Name="ImporModel" Content="Add model(.fbx)" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="22" Width="104" Click="ImportModel_Click" />
                     <Button x:Name="SkyBoxAdd" Content="Add skybox" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Height="24" Width="104" Click="SkyBoxAdd_Click"/>
                     <Button x:Name="LightAdd" Content="Add light" HorizontalAlignment="Left" Margin="119,10,0,0" VerticalAlignment="Top" Height="24" Width="104" Click="LightAdd_Click"/>
+                    <ComboBox HorizontalAlignment="Left" Margin="240,12,0,0" VerticalAlignment="Top" Width="120" BorderBrush="{x:Null}">
+                        <ComboBox.Background>
+                            <ImageBrush ImageSource="/AddObjectIcon.png"/>
+                        </ComboBox.Background>
+                    </ComboBox>
 
                 </Grid>
 
@@ -55,7 +60,7 @@
             <TabItem x:Name="ConsoleTools" Header="Console">
                 <Grid x:Name="GridConsole" Background="#FFE5E5E5">
 
-                    <ListBox x:Name="ConsoleMessage" d:ItemsSource="{d:SampleData ItemCount=5}" HorizontalAlignment="Left" Width="794"/>
+
                 </Grid>
 
             </TabItem>

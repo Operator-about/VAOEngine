@@ -1,6 +1,7 @@
 ﻿using Shader = ShaderSystem;
 using Camera = CameraSystem;
 using Debug = DebugComponent;
+using Texture = TextureComponent;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System.Runtime.CompilerServices;
@@ -34,9 +35,10 @@ public class MeshComponent
     public Matrix4 _ModelMatrixF;
     private Debug _Debug;
     private int _FBOShadow, _ShadowCount, _ShadowWidth = 2048, _ShadowHeight = 2048;
+    private Texture _Texture;
 
 
-    public Matrix4 DrawMesh(Shader _Shader, Camera _Camera, Matrix4 _LightProj)
+    public Matrix4 DrawMesh(Shader _Shader, Camera _Camera)
     {
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.Multisample);
@@ -63,17 +65,21 @@ public class MeshComponent
         _ModelMatrixF = _PositionModelF * _ScaleMatrixModelF * (_MatrixX * _MatrixY * _MatrixZ);
 
         //Use shader and bind
+        _Texture.UseTexture();
         _Shader.UseShader();
         _Shader.SetMatrix4("model", _ModelMatrixF);
         _Shader.SetMatrix4("view", _Camera.GetView());
         _Shader.SetMatrix4("proj", _Camera.GetProjection());
+        _Shader.SetBool("_TextureBindValid", true);
         _Shader.SetVector3("_Material.ModelColor", _MatrixModel._Color);
+        _Shader.SetInt("_Material.Diffuse2D", 0);
         _Shader.SetVector3("_Material.Ambient", new Vector3(0.0f, 0.1f, 0.06f));
         _Shader.SetVector3("_Material.Diffuse", new Vector3(0.0f, 0.50980392f, 0.50980392f));
         _Shader.SetVector3("_Material.Specular", new Vector3(0.50196078f, 0.50196078f, 0.50196078f));
         _Shader.SetFloat("_Material.Shininess", 32.0f);
-        //GL.ActiveTexture(TextureUnit.Texture0 + 2);
-        //GL.BindTexture(TextureTarget.Texture2D, _ShadowCount);
+        
+        
+        
 
 
         //Draw
@@ -92,22 +98,21 @@ public class MeshComponent
         GL.BindVertexArray(_VAO);
 
         GL.Enable(EnableCap.DepthTest);
-        GL.Viewport(0,0,_ShadowWidth, _ShadowHeight);
+        GL.Viewport(0, 0, _ShadowWidth, _ShadowHeight);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, _FBOShadow);
         GL.Clear(ClearBufferMask.DepthBufferBit);
 
-        
-
-
-        _ModelShader.UseShader();
-        
-
+        GL.ActiveTexture(TextureUnit.Texture2);
+        GL.BindTexture(TextureTarget.Texture2D, _ShadowCount);
+        _ModelShader.UseShader();       
+        _ModelShader.SetInt("_ShadowMap", 2);
+        _ModelShader.SetMatrix4("lightproj", _LightProjection);
         _ShadowShader.UseShader();
         _ShadowShader.SetMatrix4("model", _ModelMatrixF);
         _ShadowShader.SetMatrix4("lightproj", _LightProjection);
 
         GL.DrawElements(PrimitiveType.Triangles, _IndexG, DrawElementsType.UnsignedInt, 0);
-        //GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
         GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
         GL.Enable(EnableCap.DebugOutput);
@@ -128,6 +133,8 @@ public class MeshComponent
         _ShadowCount = GL.GenTexture();
         _VAO = GL.GenVertexArray();
         _FBOShadow = GL.GenFramebuffer();
+        _Texture = Texture.AddTexture(@".\SkyBoxTexture\CloudSky.jpg");
+        _Texture.UseTexture();
         int _VBO = GL.GenBuffer();
         int _EBO = GL.GenBuffer();
 

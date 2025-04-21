@@ -85,6 +85,19 @@ public class ShaderSystem
         GL.Uniform1(GL.GetUniformLocation(_Count,_Name), _Parameter);
     }
 
+    public void SetBool(string _Name, bool _Parameter)
+    {
+        GL.UseProgram(_Count);
+        if (_Parameter==true)
+        {
+            GL.Uniform1(GL.GetUniformLocation(_Count, _Name), 1);
+        }
+        else
+        {
+            GL.Uniform1(GL.GetUniformLocation(_Count, _Name), 0);
+        }
+    }
+
     public int GetAttrib(string _Name)
     {
         return GL.GetAttribLocation(_Count, _Name); 

@@ -2,7 +2,7 @@
 using OpenTK.Mathematics;
 using Shader = ShaderSystem;
 using MeshC = MeshComponent;
-using CameraSys = CameraSystem;
+using Camera = CameraSystem;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 
@@ -113,17 +113,17 @@ public class Load
 
 
 
-    //Draw's model system
-    public void Draw(Shader _Shader, CameraSys _Camera, Matrix4 _LightProj)
+    //Draw's model function's
+    public void Draw(Shader _Shader, Camera _Camera)
     {
         foreach (MeshC _Mesh in _MeshComp)
         {
             _OutModel = _Mesh;
-            _OutModel.DrawMesh(_Shader, _Camera, _LightProj);
+            _OutModel.DrawMesh(_Shader, _Camera);
         }
     }
 
-    public void DrawShadow(Shader _ModelShader,Shader _ShadowShader, CameraSys _Camera,Matrix4 _LightProj)
+    public void DrawShadow(Shader _ModelShader,Shader _ShadowShader, Camera _Camera,Matrix4 _LightProj)
     {
         foreach (MeshC _Shadow in _MeshComp)
         {
