@@ -8,3 +8,6 @@ VAOEngine — движок для создания игр.
 На данный момент VAOEngine находится в активной стадии разработки. 
 Движок создан разработчиком из России. 
 Движок создан на C# с использованием OpenTK.
+
+
+![VAOEngineIcon](https://github.com/user-attachments/assets/19f4ae72-770c-45ab-87f0-c66674b37ac1)
