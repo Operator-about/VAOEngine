@@ -1,5 +1,4 @@
-﻿using OpenTK.Audio.OpenAL;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System.IO;
 

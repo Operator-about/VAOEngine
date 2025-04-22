@@ -18,7 +18,6 @@ namespace VAOEngine
 {
     public partial class MainWindow : Window
     {
-        private static string _LLog;
         private Shader _ModelShader, _SkyShader, _LightShader, _ShadowShader;
         private BackGround _Process = new BackGround();
         private string _ModelPos;
@@ -46,7 +45,7 @@ namespace VAOEngine
             var _Settings = new GLWpfControlSettings()
             {
                 MajorVersion = 4,
-                MinorVersion = 0,
+                MinorVersion = 4,
                 ContextFlags = OpenTK.Windowing.Common.ContextFlags.Debug
 
             };
@@ -93,7 +92,7 @@ namespace VAOEngine
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.DepthTest);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            //GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
+            GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
             GL.Enable(EnableCap.DebugOutput);
             GL.Enable(EnableCap.DebugOutputSynchronous);
 
@@ -108,7 +107,7 @@ namespace VAOEngine
    
                 _ModelLoader[i].Draw(_ModelShader, _Camera);
                 _ModelPos = _ModelLoader[i]._OutModel._MatrixModel._Position.ToString();
-                _ModelLoader[i].DrawShadow(_ModelShader, _ShadowShader, _Camera, _LightProj);
+                //_ModelLoader[i].DrawShadow(_ModelShader, _ShadowShader, _Camera, _LightProj);
 
             }
             if(_LightLoader!=null)
@@ -149,15 +148,24 @@ namespace VAOEngine
             
         }
 
-        private void SkyBoxAdd_Click(object sender, RoutedEventArgs e)
+
+        private void ToolBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            _Process.AddSkyBox(ref _SkyBox, _SkyTexture);
+            if (ToolBox.SelectedIndex == 0)
+            {
+                _Process.ImportThread(ref _ModelLoader);
+            }
+            if (ToolBox.SelectedIndex == 1)
+            {
+                _Process.AddSkyBox(ref _SkyBox, _SkyTexture);
+            }
+            if (ToolBox.SelectedIndex == 2) 
+            {
+                _Process.AddLight(ref _LightLoader);
+            }
         }
 
-        private void LightAdd_Click(object sender, RoutedEventArgs e)
-        {
-            _Process.AddLight(ref _LightLoader);
-        }
+        
 
         private void _Control_MouseMove(object sender, MouseEventArgs e)
         {
@@ -192,11 +200,6 @@ namespace VAOEngine
             }
         }
 
-        private void ImportModel_Click(object sender, RoutedEventArgs e)
-        {
-
-            _Process.ImportThread(ref _ModelLoader);
-        }
 
         
     }

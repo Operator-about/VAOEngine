@@ -11,7 +11,7 @@ class BackgroundProcess : GameWindow
     public BackgroundProcess() : base(GameWindowSettings.Default, new NativeWindowSettings())
     {
         Size = new Vector2i(10, 10);
-        Title = "BackgroundProcess don't responde";
+        Title = "Background Process don't responde";
 
     }
 

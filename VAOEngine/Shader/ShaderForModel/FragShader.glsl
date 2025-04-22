@@ -88,7 +88,7 @@ void main()
 
 		
 
-		_Result = (_Ambient+_Diffuse+_Specular)*vec3(texture(_Material.Diffuse2D, TexCoord));
+		_Result = (_Ambient+_Diffuse+_Specular)*vec3(texture(_Material.Diffuse2D, TexCoord))*_Light.LightColor;
 		ResultReturn(_Result);
 
 	}
