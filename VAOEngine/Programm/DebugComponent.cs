@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using System.Runtime.InteropServices;
+using System.Windows;
 
 public class DebugComponent
 {
@@ -21,6 +22,7 @@ public class DebugComponent
 
         if (type == DebugType.DebugTypeError)
         {
+            MessageBox.Show(message);
             throw new Exception(message);
         }
     }

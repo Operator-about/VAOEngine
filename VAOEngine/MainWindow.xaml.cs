@@ -53,8 +53,10 @@ namespace VAOEngine
 
             _Control.Start(_Settings);
             GL.Enable(EnableCap.DepthTest);
-            
 
+            GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
+            GL.Enable(EnableCap.DebugOutput);
+            GL.Enable(EnableCap.DebugOutputSynchronous);
 
             _SkyShader = new Shader(@$".\Shader\SkyBoxShader\VertSkyShader.glsl", @$".\Shader\SkyBoxShader\FragSkyShader.glsl");
             _ModelShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\ShaderForModel\FragShader.glsl");
@@ -77,7 +79,10 @@ namespace VAOEngine
             
             _Camera = new Camera(Vector3.UnitZ * 1, (float)Width / (float)Height);
             _Process.IsVisible = false;
-           
+
+            GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
+            GL.Enable(EnableCap.DebugOutput);
+            GL.Enable(EnableCap.DebugOutputSynchronous);
 
 
 
