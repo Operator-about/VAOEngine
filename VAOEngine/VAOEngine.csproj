@@ -6,11 +6,19 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <ApplicationIcon>Texture\VAOEngineIcon.ico</ApplicationIcon>
+    <SignAssembly>False</SignAssembly>
+    <Authors>$(AssemblyName)</Authors>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="AddObjectIcon.png" />
     <None Remove="VAOEngineIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Texture\VAOEngineIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>

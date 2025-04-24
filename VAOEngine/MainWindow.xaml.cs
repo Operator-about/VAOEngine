@@ -68,7 +68,7 @@ namespace VAOEngine
             _Debug = new Debug();
 
 
-            _ShadowShader.UseShader();
+            //_ShadowShader.UseShader();
             _ModelShader.UseShader();
             _SkyShader.UseShader();
             
