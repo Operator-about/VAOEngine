@@ -64,7 +64,7 @@ void main()
 		vec3 _Specular = _Light.Specular*(_Spec*_Material.Shininess);
 
 
-		_Result = (_Ambient+_Diffuse+_Specular)*_Material.ModelColor;
+		_Result = (_Ambient+_Diffuse+_Specular);
 		ResultReturn(_Result);
 
 	};
@@ -88,7 +88,7 @@ void main()
 
 		
 
-		_Result = (_Ambient+_Diffuse+_Specular)*vec3(texture(_Material.Diffuse2D, TexCoord))*_Light.LightColor;
+		_Result = (_Ambient+_Diffuse+_Specular)*vec3(texture(_Material.Diffuse2D, TexCoord));
 		ResultReturn(_Result);
 
 	}

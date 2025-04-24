@@ -52,6 +52,7 @@ namespace VAOEngine
 
 
             _Control.Start(_Settings);
+            _Debug = new Debug();
             GL.Enable(EnableCap.DepthTest);
 
             GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
@@ -154,23 +155,20 @@ namespace VAOEngine
         }
 
 
-        private void ToolBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void SkyBoxAdd_Click(object sender, RoutedEventArgs e)
         {
-            if (ToolBox.SelectedIndex == 0)
-            {
-                _Process.ImportThread(ref _ModelLoader);
-            }
-            if (ToolBox.SelectedIndex == 1)
-            {
-                _Process.AddSkyBox(ref _SkyBox, _SkyTexture);
-            }
-            if (ToolBox.SelectedIndex == 2) 
-            {
-                _Process.AddLight(ref _LightLoader);
-            }
+            _Process.AddSkyBox(ref _SkyBox, _SkyTexture);
+        }
+        private void LightAdd_Click(object sender, RoutedEventArgs e)
+        {
+            _Process.AddLight(ref _LightLoader);
+        }
+        private void ImportModel_Click(object sender, RoutedEventArgs e)
+        {
+            _Process.ImportThread(ref _ModelLoader);
         }
 
-        
+
 
         private void _Control_MouseMove(object sender, MouseEventArgs e)
         {

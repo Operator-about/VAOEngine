@@ -70,7 +70,7 @@ public class MeshComponent
         _Shader.SetMatrix4("model", _ModelMatrixF);
         _Shader.SetMatrix4("view", _Camera.GetView());
         _Shader.SetMatrix4("proj", _Camera.GetProjection());
-        _Shader.SetBool("_TextureBindValid", true);
+        _Shader.SetBool("_TextureBindValid", false);
         _Shader.SetVector3("_Material.ModelColor", _MatrixModel._Color);
         _Shader.SetInt("_Material.Diffuse2D", 0);
         _Shader.SetVector3("_Material.Ambient", new Vector3(0.0f, 0.1f, 0.06f));

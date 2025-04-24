@@ -45,17 +45,11 @@
         <TabControl VerticalAlignment="Bottom" Height="110" Margin="0,324,0,0">
             <TabItem x:Name="PanelTools" Header="Tools">
                 <Grid x:Name="GridTools" Background="#FFE5E5E5">
-                    
-                    
-                    <ComboBox x:Name="ToolBox" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120" BorderBrush="{x:Null}" SelectionChanged="ToolBox_SelectionChanged">
-                        <TextBlock>Add model(.fbx)</TextBlock>
-                        <TextBlock>Add skybox</TextBlock>
-                        <TextBlock>Add light</TextBlock>
-                        
-                        <ComboBox.Background>
-                            <ImageBrush ImageSource="/AddObjectIcon.png"/>
-                        </ComboBox.Background>
-                    </ComboBox>
+
+
+                    <Button x:Name="ImporModel" Content="Add model(.fbx)" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="22" Width="104" Click="ImportModel_Click" />
+                    <Button x:Name="SkyBoxAdd" Content="Add skybox" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Height="24" Width="104" Click="SkyBoxAdd_Click"/>
+                    <Button x:Name="LightAdd" Content="Add light" HorizontalAlignment="Left" Margin="119,10,0,0" VerticalAlignment="Top" Height="24" Width="104" Click="LightAdd_Click"/>
 
                 </Grid>
 
