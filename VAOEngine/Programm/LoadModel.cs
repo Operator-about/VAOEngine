@@ -123,13 +123,5 @@ public class Load
         }
     }
 
-    public void DrawShadow(Shader _ModelShader,Shader _ShadowShader, Camera _Camera,Matrix4 _LightProj)
-    {
-        foreach (MeshC _Shadow in _MeshComp)
-        {
-            _Shadow.DrawShadow(_ModelShader, _ShadowShader, _Camera, _LightProj);
-        }
-    }
-
 
 }
