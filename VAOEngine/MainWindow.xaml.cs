@@ -7,9 +7,10 @@ using Shader = ShaderSystem;
 using Camera = CameraSystem;
 using SkyBox = SkyBoxComponent;
 using Light = LightComponent;
-using Debug = DebugComponent;
+//using Debug = DebugComponent;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
+using System.Diagnostics;
 
 
 
@@ -24,7 +25,7 @@ namespace VAOEngine
         private List<ModelLoad> _ModelLoader;
         private List<Light> _LightLoader;
         private Camera _Camera;
-        private Debug _Debug;
+        //private Debug _Debug;
         private SkyBox _SkyBox;
         private static List<string> _SkyTexture = new List<string>() {
         @".\SkyBoxTexture\SunSky.jpg",
@@ -44,7 +45,7 @@ namespace VAOEngine
             var _Settings = new GLWpfControlSettings()
             {
                 MajorVersion = 4,
-                MinorVersion = 4,
+                MinorVersion = 0,
                 ContextFlags = OpenTK.Windowing.Common.ContextFlags.Debug
 
             };
@@ -75,8 +76,8 @@ namespace VAOEngine
             _Camera = new Camera(Vector3.UnitZ * 1, (float)Width / (float)Height);
             _Process.IsVisible = false;
 
-            _Debug = new Debug();
-            GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
+            //_Debug = new Debug();
+            //GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
             GL.Enable(EnableCap.DebugOutput);
             GL.Enable(EnableCap.DebugOutputSynchronous);
 
@@ -93,7 +94,7 @@ namespace VAOEngine
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.DepthTest);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
+            //GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
             GL.Enable(EnableCap.DebugOutput);
             GL.Enable(EnableCap.DebugOutputSynchronous);
 
@@ -122,20 +123,10 @@ namespace VAOEngine
             if (_SkyBox != null)
             {
                 _SkyBox.Draw(_SkyShader, _Camera);
-                ConsoleMessage.Items.Add($"SkyBox status:{_SkyBox._Log}");
+         
             }
 
-            ConsoleMessage.Items.Add($"Main status:{GL.GetError().ToString()}");
-            ConsoleMessage.Items.Add($"Model shader status:{_ModelShader._Log}");
-            ConsoleMessage.Items.Add($"SkyBox shader status:{_SkyShader._Log}");
-            ConsoleMessage.Items.Add($"Light shader status:{_LightShader._Log}");
-            ConsoleMessage.Items.Add($"Viewport scale: W: {Width}, H: {Height}");
-
-
-            //ModelCount.Text = _ModelLoader.Count.ToString();
-            ModelPosition.Text = _ModelPos;
-
-            CameraPos.Text = $"X:{_Camera._Position.X.ToString()}.Y:{_Camera._Position.Y.ToString()}.Z:{_Camera._Position.Z.ToString()}";
+            
 
             if (Mouse.LeftButton==MouseButtonState.Released)
             {
@@ -158,9 +149,16 @@ namespace VAOEngine
         private void ImportModel_Click(object sender, RoutedEventArgs e)
         {
             _Process.ImportThread(ref _ModelLoader);
+            ObjectList.Items.Add($"Mesh_{_ModelLoader.Count}");
+
         }
 
+        private void Destroy_Click(object sender, RoutedEventArgs e)
+        {
+            MainControl.Items.Remove(OutputLog);
+        }
 
+        
 
         private void _Control_MouseMove(object sender, MouseEventArgs e)
         {
