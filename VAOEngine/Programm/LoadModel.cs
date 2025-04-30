@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 using Shader = ShaderSystem;
 using MeshC = MeshComponent;
 using Camera = CameraSystem;
+using Light = LightComponent;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 
@@ -120,6 +121,14 @@ public class Load
         {
             _OutModel = _Mesh;
             _OutModel.DrawMesh(_Shader, _Camera);
+        }
+    }
+
+    public void DrawShadow(Shader _ModelShader, Shader _ShadowShader, List<Light> _Light, Camera _Camera)
+    {
+        foreach (MeshC _Mesh in _MeshComp)
+        {
+            _OutModel.DrawShadow(_ModelShader, _ShadowShader, _Light, _Camera);
         }
     }
 
