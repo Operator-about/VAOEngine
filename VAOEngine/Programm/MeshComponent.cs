@@ -72,7 +72,7 @@ public class MeshComponent
         _Shader.SetMatrix4("model", _ModelMatrixF);
         _Shader.SetMatrix4("view", _Camera.GetView());
         _Shader.SetMatrix4("proj", _Camera.GetProjection());
-        _Shader.SetBool("_TextureBindValid", false);
+        _Shader.SetBool("_TextureBindValid", true);
         _Shader.SetVector3("_Material.ModelColor", _MatrixModel._Color);
         _Shader.SetInt("_Material.Diffuse2D", 0);
         _Shader.SetVector3("_Material.Ambient", new Vector3(0.0f, 0.1f, 0.06f));
@@ -87,6 +87,7 @@ public class MeshComponent
         //Draw
         GL.DrawElements(PrimitiveType.Triangles, _IndexG, DrawElementsType.UnsignedInt, 0);
         GL.BindVertexArray(0);
+       
 
         GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
         GL.Enable(EnableCap.DebugOutput);
@@ -96,12 +97,13 @@ public class MeshComponent
 
     public void DrawShadow(Shader _ModelShader, Shader _ShadowShader, List<Light> _Light, Camera _Camera)
     {
-        GL.Enable(EnableCap.DepthTest);
+
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, _FBO);
 
-        GL.ActiveTexture(TextureUnit.Texture0 + 2);
+        GL.ActiveTexture(TextureUnit.Texture1);
+        GL.BindTexture(TextureTarget.Texture2D, _FBOShadow);
         _ModelShader.UseShader();
-        _ModelShader.SetInt("_ShadowMap", 2);
+        _ModelShader.SetInt("_ShadowMap", 1);
         for (int i = 0; i < _Light.Count; i++)
         {
             Matrix4 _LightProjOht = Matrix4.CreateOrthographicOffCenter(-35.0f, 35.0f, -35.0f, 35.0f, 0.1f, 75.0f);
@@ -166,12 +168,12 @@ public class MeshComponent
         GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._TexCoord)));
 
 
-        
-        
+
+
 
         GL.BindTexture(TextureTarget.Texture2D, _FBOShadow);
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.DepthComponent, _ShadowWidht, _ShadowHeight, 0, PixelFormat.DepthComponent, PixelType.Float, (nint)null);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear); 
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);

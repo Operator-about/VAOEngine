@@ -135,6 +135,9 @@ namespace VAOEngine
                 
             }
 
+            Log.Items.Add($"Main System Status:{GL.GetError().ToString()}");
+            Log.Items.Add($"Model Shader Status:{_ModelShader._Log}");
+            Log.Items.Add($"Shadow Shader Status:{_ShadowShader._Log}");
             
         }
 
@@ -152,6 +155,11 @@ namespace VAOEngine
             _Process.ImportThread(ref _ModelLoader);
             ObjectList.Items.Add($"Mesh_{_ModelLoader.Count}");
 
+        }
+
+        private void ClearLog_Click(object sender, RoutedEventArgs e)
+        {
+            Log.Items.Clear();  
         }
 
         private void Destroy_Click(object sender, RoutedEventArgs e)

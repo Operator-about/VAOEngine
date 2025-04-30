@@ -63,8 +63,20 @@ void main()
 		float _Spec = pow(max(dot(_ViewDir, _ReflectionDir),0.0),_Material.Shininess);
 		vec3 _Specular = _Light.Specular*(_Spec*_Material.Shininess);
 
+		float _Shadow = 0.0;
+		vec3 _LightCoord = FragPosLight.xyz/FragPosLight.w;
+		if(_LightCoord.z<=1.0)
+		{
+			_LightCoord = (_LightCoord+1.0)/2.0;
+			float _ClosesDepth = texture(_ShadowMap, _LightCoord.xy).r;
+			float _CurrentDepth = _LightCoord.z;
+			if(_CurrentDepth<_ClosesDepth)
+			{
+				_Shadow = 1.0;
+			}
+		}
 
-		_Result = (_Ambient+_Diffuse+_Specular);
+		_Result = (_Ambient*(_Shadow-1.0)+_Diffuse+_Specular)*_Material.ModelColor;
 		ResultReturn(_Result);
 
 	};
@@ -100,7 +112,7 @@ void main()
 			}
 		}
 
-		_Result = (_Ambient+_Diffuse*(1.0-_Shadow)+_Specular*(1.0-_Shadow));
+		_Result = (_Ambient*(1.0-_Shadow)+_Diffuse+_Specular);
 		ResultReturn(_Result);
 
 	}

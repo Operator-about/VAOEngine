@@ -28,25 +28,26 @@
                             <ColumnDefinition Width="240*"/>
                             <ColumnDefinition Width="79*"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <StackPanel Grid.Row="0"  Grid.Column="0" Margin="-18,732,18,0" Grid.RowSpan="2">
                             <Border Background="#FF222833" CornerRadius="10" BorderBrush="Transparent" Width="1404">
                                 <Grid Height="295">
                                     <TextBlock FontSize="42" Foreground="White" FontFamily="Franklin Gothic Medium">Tools</TextBlock>
                                     <Button Content="Add Model" FontSize="40" Height="58" Width="267" FontFamily="Franklin Gothic Medium" Click="ImportModel_Click" HorizontalAlignment="Left" Margin="10,58,0,179"/>
                                     <Button Content="Add Light" FontSize="40" Height="58" Width="267" FontFamily="Franklin Gothic Medium" Click="LightAdd_Click" HorizontalAlignment="Left" Margin="10,128,0,109"/>
+                                     
                                 </Grid>
                             </Border>
 
                         </StackPanel>
 
-                        
+
                         <StackPanel Grid.Row="0" Margin="0,9,0,2" HorizontalAlignment="Left" Width="1404" Grid.RowSpan="2">
                             <glWpfControl:GLWpfControl
                                 x:Name="_Control"
                                 Render="_Control_Render"
                                 MouseMove="_Control_MouseMove" Height="700" Width="1380"/>
-                            
+
                         </StackPanel>
                         <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
                             <Border Height="701" Background="#FF222833" CornerRadius="10">
@@ -68,7 +69,7 @@
                                 </Grid>
                             </Border>
                         </StackPanel>
-                        
+
                         <GridSplitter Grid.Row="0" Grid.Column="0" Grid.RowSpan="1" ShowsPreview="false" Width="3" HorizontalAlignment="Right">
 
                         </GridSplitter>
@@ -88,6 +89,27 @@
                         <Button x:Name="Destroy" Content="X" Background="DarkRed" Foreground="White" HorizontalAlignment="Right" Click="Destroy_Click"></Button>
                     </StackPanel>
                 </TabItem.Header>
+                <TabItem.Content>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="38*"/>
+                            <RowDefinition Height="5*"/>
+                        </Grid.RowDefinitions>
+                        <ListBox x:Name="Log" Background="Transparent" BorderBrush="Transparent" Foreground="White" FontSize="14" FontFamily="Franklin Gothic Medium" Grid.RowSpan="2">
+
+                        </ListBox>
+                        <StackPanel Grid.Row="1">
+                            <Grid Height="100">
+                                <Border Background="#FF222833" Margin="0,0,0,-24" BorderBrush="Transparent">
+                                    
+                                </Border>
+                                <Button x:Name="ClearLog" Margin="26,22,1644,28" Content="Clear log" FontSize="32" FontFamily="Franklin Gothic Medium" Click="ClearLog_Click">
+                                    
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </TabItem.Content>
             </TabItem>
 
         </TabControl>
