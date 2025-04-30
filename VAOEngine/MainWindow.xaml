@@ -34,6 +34,7 @@
                                 <Grid Height="295">
                                     <TextBlock FontSize="42" Foreground="White" FontFamily="Franklin Gothic Medium">Tools</TextBlock>
                                     <Button Content="Add Model" FontSize="40" Height="58" Width="267" FontFamily="Franklin Gothic Medium" Click="ImportModel_Click" HorizontalAlignment="Left" Margin="10,58,0,179"/>
+                                    <Button Content="Add Light" FontSize="40" Height="58" Width="267" FontFamily="Franklin Gothic Medium" Click="LightAdd_Click" HorizontalAlignment="Left" Margin="10,128,0,109"/>
                                 </Grid>
                             </Border>
 

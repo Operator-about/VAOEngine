@@ -166,8 +166,7 @@ public class MeshComponent
         GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._TexCoord)));
 
 
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, _FBO);
-        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, TextureTarget.Texture2D, _FBOShadow, 0);
+        
         
 
         GL.BindTexture(TextureTarget.Texture2D, _FBOShadow);
@@ -180,6 +179,8 @@ public class MeshComponent
         int[] _ClampColor = new int[] { 1, 1, 1, 1 };
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, _ClampColor);
 
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, _FBO);
+        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, TextureTarget.Texture2D, _FBOShadow, 0);
         GL.DrawBuffer(DrawBufferMode.None);
         GL.ReadBuffer(ReadBufferMode.None);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
