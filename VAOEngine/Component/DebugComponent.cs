@@ -22,7 +22,7 @@ public class DebugComponent
 
         if (type == DebugType.DebugTypeError)
         {
-            MessageBox.Show(message);
+            //MessageBox.Show(message);
             throw new Exception(message);
         }
     }

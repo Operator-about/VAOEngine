@@ -4,6 +4,7 @@ using Shader = ShaderSystem;
 using MeshC = MeshComponent;
 using Camera = CameraSystem;
 using Light = LightComponent;
+using OpenTK.Wpf;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 
@@ -124,11 +125,11 @@ public class Load
         }
     }
 
-    public void DrawShadow(Shader _ModelShader, Shader _ShadowShader, List<Light> _Light, Camera _Camera)
+    public void DrawShadow(Shader _ModelShader, Shader _ShadowShader, List<Light> _Light, Camera _Camera, GLWpfControl _Control)
     {
         foreach (MeshC _Mesh in _MeshComp)
         {
-            _OutModel.DrawShadow(_ModelShader, _ShadowShader, _Light, _Camera);
+            _OutModel.DrawShadow(_ModelShader, _ShadowShader, _Light, _Camera, _Control);
         }
     }
 

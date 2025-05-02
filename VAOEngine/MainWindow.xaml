@@ -10,7 +10,7 @@
     <Grid Background="#2e3e5f">
 
 
-        <TabControl x:Name="MainControl" BorderBrush="{x:Null}" Background="#FF2B3446" Grid.ColumnSpan="3" >
+        <TabControl x:Name="MainControl" BorderBrush="{x:Null}" Background="#FF2B3446" TabStripPlacement="Left" >
             <TabItem x:Name="MainScene">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
@@ -29,16 +29,49 @@
                             <ColumnDefinition Width="79*"/>
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Row="0"  Grid.Column="0" Margin="-18,732,18,0" Grid.RowSpan="2">
-                            <Border Background="#FF222833" CornerRadius="10" BorderBrush="Transparent" Width="1404">
-                                <Grid Height="295">
-                                    <TextBlock FontSize="42" Foreground="White" FontFamily="Franklin Gothic Medium">Tools</TextBlock>
-                                    <Button Content="Add Model" FontSize="40" Height="58" Width="267" FontFamily="Franklin Gothic Medium" Click="ImportModel_Click" HorizontalAlignment="Left" Margin="10,58,0,179"/>
-                                    <Button Content="Add Light" FontSize="40" Height="58" Width="267" FontFamily="Franklin Gothic Medium" Click="LightAdd_Click" HorizontalAlignment="Left" Margin="10,128,0,109"/>
-                                     
-                                </Grid>
-                            </Border>
+                        <StackPanel Grid.Row="1">
+                            <TabControl Height="309" Background="Transparent" BorderBrush="Transparent">
+                                <TabItem>
+                                    <TabItem.Header>
+                                        <TextBlock FontSize="22" FontFamily="Franklin Gothic Medium">Tools</TextBlock>
+                                    </TabItem.Header>
+                                    <TabItem.Content>
+                                        <Grid>
+                                            <Border Background="#FF222833" CornerRadius="10" BorderBrush="Transparent" Margin="0,0,39,0">
+                                                <Grid Height="295">
+                                                    <TextBlock FontSize="42" Foreground="White" FontFamily="Franklin Gothic Medium" Cursor="SizeNS">Tools</TextBlock>
+                                                    <Button Content="Add Model" FontSize="40" Width="216" FontFamily="Franklin Gothic Medium" Click="ImportModel_Click" HorizontalAlignment="Left" Margin="10,58,0,196"/>
+                                                    <Button Content="Add Light" FontSize="40" Width="216" FontFamily="Franklin Gothic Medium" Click="LightAdd_Click" HorizontalAlignment="Left" Margin="10,127,0,127"/>
 
+                                                </Grid>
+                                            </Border>
+                                        </Grid>
+                                    </TabItem.Content>
+                                </TabItem>
+                                <TabItem>
+                                    <TabItem.Header>
+                                        <TextBlock FontSize="22" FontFamily="Franklin Gothic Medium">Browser</TextBlock>
+                                    </TabItem.Header>
+                                    <TabItem.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="52*"/>
+                                                <ColumnDefinition Width="405*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="1">
+                                                <Border Background="#FF222833" CornerRadius="10" BorderBrush="Transparent" Width="1180" Height="309">
+                                                    <Grid Height="295"/>
+                                                </Border>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="0">
+                                                <Border Background="#FF222833" CornerRadius="10" BorderBrush="Transparent" Height="293">
+                                                    <Grid Height="295"/>
+                                                </Border>
+                                            </StackPanel>
+                                        </Grid>
+                                    </TabItem.Content>
+                                </TabItem>
+                            </TabControl>
                         </StackPanel>
 
 
@@ -51,9 +84,18 @@
                         </StackPanel>
                         <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
                             <Border Height="701" Background="#FF222833" CornerRadius="10">
-                                <ListBox x:Name="ObjectList" Background="Transparent" BorderBrush="Transparent" Foreground="White">
+                                <StackPanel>
+                                    <TreeView x:Name="ListObject" Background="Transparent" BorderBrush="Transparent" Foreground="White" FontSize="20" FontFamily="Franklin Gothic Medium">
+                                        <TreeViewItem x:Name="ListSceneObject" Header="Scene Object" Foreground="White">
 
-                                </ListBox>
+                                        </TreeViewItem>
+                                    </TreeView>
+                                    <TreeView x:Name="ListLight" Background="Transparent" BorderBrush="Transparent" Foreground="White" FontSize="20" FontFamily="Franklin Gothic Medium">
+                                        <TreeViewItem x:Name="ListLightScene" Header="Scene Light" Foreground="White">
+
+                                        </TreeViewItem>
+                                    </TreeView>
+                                </StackPanel>
                             </Border>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Grid.Column="1">
@@ -70,12 +112,8 @@
                             </Border>
                         </StackPanel>
 
-                        <GridSplitter Grid.Row="0" Grid.Column="0" Grid.RowSpan="1" ShowsPreview="false" Width="3" HorizontalAlignment="Right">
-
-                        </GridSplitter>
-                        <GridSplitter Grid.Row="1" Grid.Column="0" Grid.RowSpan="1"   ShowsPreview="False" Width="2000" Height="3"  HorizontalAlignment="Stretch" VerticalAlignment="Top">
-
-                        </GridSplitter>
+                        <GridSplitter Grid.Row="0" Grid.Column="0" Grid.RowSpan="1" ShowsPreview="false" Width="3" Margin="0,0,0,18"/>
+                        
                     </Grid>
 
 
@@ -101,10 +139,10 @@
                         <StackPanel Grid.Row="1">
                             <Grid Height="100">
                                 <Border Background="#FF222833" Margin="0,0,0,-24" BorderBrush="Transparent">
-                                    
+
                                 </Border>
                                 <Button x:Name="ClearLog" Margin="26,22,1644,28" Content="Clear log" FontSize="32" FontFamily="Franklin Gothic Medium" Click="ClearLog_Click">
-                                    
+
                                 </Button>
                             </Grid>
                         </StackPanel>

@@ -5,6 +5,7 @@ using Texture = TextureComponent;
 using Light = LightComponent;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using OpenTK.Wpf;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -31,9 +32,8 @@ public class MeshComponent
 {
 
     private readonly int _VAO;
-    private readonly int _FBO, _FBOShadow;
     private readonly int _IndexG;
-    private int _ShadowWidht = 2048, _ShadowHeight = 2048;
+    public int _ShadowWidht = 2048, _ShadowHeight = 2048;
     public MeshPosScaleRot _MatrixModel;
     public Matrix4 _ModelMatrixF;
     private Debug _Debug;
@@ -95,13 +95,11 @@ public class MeshComponent
         return _ModelMatrixF;
     }
 
-    public void DrawShadow(Shader _ModelShader, Shader _ShadowShader, List<Light> _Light, Camera _Camera)
+    public void DrawShadow(Shader _ModelShader, Shader _ShadowShader, List<Light> _Light, Camera _Camera, GLWpfControl _Control)
     {
+        
 
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, _FBO);
-
-        GL.ActiveTexture(TextureUnit.Texture1);
-        GL.BindTexture(TextureTarget.Texture2D, _FBOShadow);
+        
         _ModelShader.UseShader();
         _ModelShader.SetInt("_ShadowMap", 1);
         for (int i = 0; i < _Light.Count; i++)
@@ -113,9 +111,7 @@ public class MeshComponent
             _ShadowShader.UseShader();
             _ShadowShader.SetMatrix4("model", _ModelMatrixF);
             _ShadowShader.SetMatrix4("lightproj", _LightProj);
-        }
-        
-        
+        } 
     }
 
     
@@ -132,11 +128,9 @@ public class MeshComponent
         //Bind
         _VAO = GL.GenVertexArray();
         _Texture = Texture.AddTexture(@".\SkyBoxTexture\CloudSky.jpg");
-        _Texture.UseTexture();
+        
         int _VBO = GL.GenBuffer();
         int _EBO = GL.GenBuffer();
-        _FBO = GL.GenFramebuffer();
-        _FBOShadow = GL.GenTexture();
 
         GL.BindVertexArray(_VAO);
 
@@ -168,24 +162,10 @@ public class MeshComponent
         GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, Unsafe.SizeOf<VertexMesh>(), Marshal.OffsetOf<VertexMesh>(nameof(VertexMesh._TexCoord)));
 
 
+        _Texture.UseTexture();
 
 
 
-        GL.BindTexture(TextureTarget.Texture2D, _FBOShadow);
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.DepthComponent, _ShadowWidht, _ShadowHeight, 0, PixelFormat.DepthComponent, PixelType.Float, (nint)null);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
-
-        int[] _ClampColor = new int[] { 1, 1, 1, 1 };
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, _ClampColor);
-
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, _FBO);
-        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, TextureTarget.Texture2D, _FBOShadow, 0);
-        GL.DrawBuffer(DrawBufferMode.None);
-        GL.ReadBuffer(ReadBufferMode.None);
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         GL.BindVertexArray(0);
     }
 }

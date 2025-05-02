@@ -97,24 +97,24 @@ public class LightComponent
         GL.ActiveTexture(TextureUnit.Texture0);
         GL.BindTexture(TextureTarget.Texture2D, _Count);
 
-        //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-        //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-        //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-        //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
 
-        //StbImage.stbi_set_flip_vertically_on_load(1);
+        StbImage.stbi_set_flip_vertically_on_load(1);
 
-        //Stream _FileTexture = File.OpenRead(_TextureLight);
-        //ImageResult _Texture = ImageResult.FromStream(_FileTexture, ColorComponents.RedGreenBlueAlpha);
+        Stream _FileTexture = File.OpenRead(_TextureLight);
+        ImageResult _Texture = ImageResult.FromStream(_FileTexture, ColorComponents.RedGreenBlueAlpha);
 
-        ////GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, _Texture.Width, _Texture.Height, 0, PixelFormat.Rgba,
-        ////    PixelType.UnsignedByte, _Texture.Data);
-
-        
+        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, _Texture.Width, _Texture.Height, 0, PixelFormat.Rgba,
+            PixelType.UnsignedByte, _Texture.Data);
 
 
-        //GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-        //GL.BindTexture(TextureTarget.Texture2D, 0);
+
+
+        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+        GL.BindTexture(TextureTarget.Texture2D, 0);
 
         return _Count;
     }
