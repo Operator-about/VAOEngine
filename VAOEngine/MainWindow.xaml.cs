@@ -7,9 +7,10 @@ using Shader = ShaderSystem;
 using Camera = CameraSystem;
 using SkyBox = SkyBoxComponent;
 using Light = LightComponent;
-using Debug = DebugComponent;
+using Debugf = DebugComponent;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
+using System.Diagnostics;
 
 
 
@@ -24,7 +25,7 @@ namespace VAOEngine
         private List<ModelLoad> _ModelLoader;
         private List<Light> _LightLoader;
         private Camera _Camera;
-        private Debug _Debug;
+        //private Debugf _Debug;
         private SkyBox _SkyBox;
         private static List<string> _SkyTexture = new List<string>() {
         @".\SkyBoxTexture\SunSky.jpg",
@@ -44,7 +45,7 @@ namespace VAOEngine
             var _Settings = new GLWpfControlSettings()
             {
                 MajorVersion = 4,
-                MinorVersion = 4,
+                MinorVersion = 0,
                 ContextFlags = OpenTK.Windowing.Common.ContextFlags.Debug
 
             };
@@ -56,6 +57,7 @@ namespace VAOEngine
 
             _SkyShader = new Shader(@$".\Shader\SkyBoxShader\VertSkyShader.glsl", @$".\Shader\SkyBoxShader\FragSkyShader.glsl");
             _ModelShader = new Shader(@$".\Shader\VertShader.glsl", @$".\Shader\ShaderForModel\FragShader.glsl");
+            //Debug.WriteLine(_ModelShader._Log);
             _LightShader = new Shader(@$".\Shader\TextureShaderLight\VertTextureLightShader.glsl", @$".\Shader\TextureShaderLight\FragTextureLightShader.glsl");
             
 
@@ -75,10 +77,10 @@ namespace VAOEngine
             _Camera = new Camera(Vector3.UnitZ * 1, (float)Width / (float)Height);
             _Process.IsVisible = false;
 
-            _Debug = new Debug();
-            GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
-            GL.Enable(EnableCap.DebugOutput);
-            GL.Enable(EnableCap.DebugOutputSynchronous);
+            //_Debug = new Debugf();
+            //GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
+            //GL.Enable(EnableCap.DebugOutput);
+            //GL.Enable(EnableCap.DebugOutputSynchronous);
 
 
 
@@ -93,24 +95,30 @@ namespace VAOEngine
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.DepthTest);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
-            GL.Enable(EnableCap.DebugOutput);
-            GL.Enable(EnableCap.DebugOutputSynchronous);
+            //GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
+            //GL.Enable(EnableCap.DebugOutput);
+            //GL.Enable(EnableCap.DebugOutputSynchronous);
 
             _Camera.InputCameraSystem();
 
-            _ModelShader.UseShader();
-            
 
-            
-            for (int i = 0; i < _ModelLoader.Count; i++)
+           
+			_ModelShader.UseShader();
+            _SkyShader.UseShader();
+
+
+			if (_ModelLoader!=null)
             {
-   
-                _ModelLoader[i].Draw(_ModelShader, _Camera);
-                _ModelPos = _ModelLoader[i]._OutModel._MatrixModel._Position.ToString();
-                
+				
+				for (int i = 0; i < _ModelLoader.Count; i++)
+				{
+					
+					_ModelLoader[i].Draw(_ModelShader, _Camera);
+					_ModelPos = _ModelLoader[i]._OutModel._MatrixModel._Position.ToString();
 
-            }
+
+				}
+			}
             if(_LightLoader!=null)
             {
                 for (int i = 0; i < _LightLoader.Count; i++)

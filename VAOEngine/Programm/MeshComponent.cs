@@ -33,7 +33,6 @@ public class MeshComponent
     private readonly int _IndexG;
     public MeshPosScaleRot _MatrixModel;
     public Matrix4 _ModelMatrixF;
-    private Debug _Debug;
     private Texture _Texture;
 
 
@@ -85,9 +84,7 @@ public class MeshComponent
         GL.DrawElements(PrimitiveType.Triangles, _IndexG, DrawElementsType.UnsignedInt, 0);
         GL.BindVertexArray(0);
 
-        GL.DebugMessageCallback(_Debug._Debuger, IntPtr.Zero);
-        GL.Enable(EnableCap.DebugOutput);
-        GL.Enable(EnableCap.DebugOutputSynchronous);
+        
         return _ModelMatrixF;
     }
 
@@ -98,7 +95,6 @@ public class MeshComponent
     public MeshComponent(Span<VertexMesh> _Vertex, Span<int> _Index)
     {
         
-        _Debug = new Debug();
         _IndexG = _Index.Length;
 
 

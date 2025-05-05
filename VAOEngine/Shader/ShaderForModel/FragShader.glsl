@@ -1,108 +1,41 @@
-﻿#version 330 core
+﻿#version 330
 
 out vec4 FragColor;
 
-struct Material
-{
-
-	vec3 Ambient;
-	vec3 Diffuse;
-	sampler2D Diffuse2D;
-	vec3 Specular;
-	vec3 ModelColor;
-	float Shininess;
-
-};
-
-
-
-struct Light
-{
-
-	vec3 Position;
-	vec3 Ambient;
-	vec3 Diffuse;
-	vec3 Specular;
-	vec3 LightColor;
-
-};
-
+uniform vec3 objColor;
+uniform vec3 lightColor;
+uniform vec3 lightPosition;
+uniform vec3 lightView;
 
 in vec3 Normal;
-in vec2 TexCoord;
 in vec3 CurrentPos;
-in vec4 FragPosLight;
+in vec4 fragpos;
 
-uniform vec3 _ViewPosition;
-uniform int _TextureBindValid;
-uniform Light _Light;
-uniform Material _Material;
-uniform sampler2D _ShadowMap;
-
-vec3 ResultReturn(vec3 _Relust);
+uniform sampler2D shadowmap;
 
 void main()
 {
-	vec3 _Result = vec3(1.0,1.0,1.0);
 
-	if(_TextureBindValid==0)
-	{
+	float AmbientS = 0.1f;
+	vec3 Ambient = AmbientS*lightColor;
+	
+	
+	vec3 Norm = normalize(Normal);
+	vec3 LigthDirect = normalize(lightPosition-CurrentPos);
 
-		//Ambient
-		vec3 _Ambient = _Light.Ambient*_Material.Ambient;
+	float Diff = max(dot(Norm, LigthDirect),0.0f);
+	vec3 Diffuse = Diff * lightColor;
 
-		//Diffuse
-		vec3 _Normal = normalize(Normal);
-		vec3 _LightDir = normalize(_Light.Position-CurrentPos);
-		float _Diff = max(dot(_Normal, _LightDir),0.0);
-		vec3 _Diffuse = _Light.Diffuse*(_Diff*_Material.Diffuse);
-
-		//Specular
-		vec3 _ViewDir = normalize(_ViewPosition-CurrentPos);
-		vec3 _ReflectionDir = reflect(-_LightDir, _Normal);
-		float _Spec = pow(max(dot(_ViewDir, _ReflectionDir),0.0),_Material.Shininess);
-		vec3 _Specular = _Light.Specular*(_Spec*_Material.Shininess);
-
-
-		_Result = (_Ambient+_Diffuse+_Specular);
-		ResultReturn(_Result);
-
-	};
-	if(_TextureBindValid==1)
-	{
-
-		//Ambient
-		vec3 _Ambient = _Light.Ambient*vec3(texture(_Material.Diffuse2D, TexCoord));
-
-		//Diffuse
-		vec3 _Normal = normalize(Normal);
-		vec3 _LightDir = normalize(_Light.Position-CurrentPos);
-		float _Diff = max(dot(_Normal, _LightDir),0.0);
-		vec3 _Diffuse = _Light.Diffuse*_Diff*vec3(texture(_Material.Diffuse2D, TexCoord));
-
-		//Specular
-		vec3 _ViewDir = normalize(_ViewPosition-CurrentPos);
-		vec3 _ReflectionDir = reflect(-_LightDir, _Normal);
-		float _Spec = pow(max(dot(_ViewDir, _ReflectionDir),0.0),_Material.Shininess);
-		vec3 _Specular = _Light.Specular*(_Spec*_Material.Shininess);
-
-		
-
-		_Result = (_Ambient+_Diffuse+_Specular)*vec3(texture(_Material.Diffuse2D, TexCoord));
-		ResultReturn(_Result);
-
-	}
+	float SpecularS = 0.5f;
+	vec3 ViewDirection = normalize(lightView-CurrentPos);
+	vec3 ReflectDirection = reflect(-LigthDirect, Norm);
+	float Spec = pow(max(dot(ViewDirection, ReflectDirection),0.0f),32.0f);
+	vec3 Specular = SpecularS * Spec * lightColor;
 
 	
 
-	//OutPut
-	FragColor = vec4(_Result,1.0);
-}
-
-vec3 ResultReturn(vec3 _Result)
-{
-
-	return _Result;
+	
+	vec3 Resultation = (Diffuse+Ambient+Specular)*objColor;
+	FragColor = vec4(Resultation,1.0f);
 
 }
-
